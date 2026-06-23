@@ -51,7 +51,7 @@ The git segment is two Starship modules:
 
 When the repo is clean, only the branch line appears. Run `starship explain` in any directory to see what each segment is.
 
-`[git_branch]` hides `main`/`master` when clean; `[git_state]` shows rebase/merge/etc.; dirty-state symbols come from `[git_status]`.
+`[git_branch]` always shows the current branch with ` `; `[git_state]` shows rebase/merge/etc.; dirty-state symbols come from `[git_status]`.
 
 ## Tools & Environment
 

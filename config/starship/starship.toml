@@ -42,7 +42,6 @@ symbol = " "
 style = "bold purple"
 format = "[$symbol$branch]($style) "
 truncation_length = 24
-ignore_branches = ["main"]
 
 [git_state]
 style = "bold yellow"
