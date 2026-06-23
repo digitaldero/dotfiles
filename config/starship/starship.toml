@@ -8,8 +8,7 @@ $hostname\
 $directory\
 $git_branch\
 $git_state\
-$git_status\
- $character
+$git_status $character
 """
 
 # Right side prompt (optional, can add time, cmd duration etc later)
@@ -45,7 +44,7 @@ truncation_length = 24
 
 [git_state]
 style = "bold yellow"
-format = "[$state( $progress_current/$progress_total)]($style)"
+format = " [$state( $progress_current/$progress_total)]($style)"
 rebase = "REBASING"
 merge = "MERGING"
 revert = "REVERTING"
@@ -56,7 +55,7 @@ am_or_rebase = "AM/REBASE"
 
 [git_status]
 style = "bold red"
-format = "[$all_status$ahead_behind]($style)"
+format = " [$all_status$ahead_behind]($style)"
 conflicted = "⚔️ "
 ahead = "↑${count}"
 behind = "↓${count}"
