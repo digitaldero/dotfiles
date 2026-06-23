@@ -1,0 +1,13 @@
+#!/bin/bash
+LIST_FILE="$HOME/fsjal"
+
+# Pick 20 random lines and feed them to Clipman
+shuf -n 20 "$LIST_FILE" | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    # xsel -b (clipboard) -i (input)
+    echo -n "$line" | tr -d '\r' | xsel -b -i
+    # 0.15s is the safety zone for Clipman to register the 'copy'
+    #sleep 0.01
+done
+
+notify-send -u low "Clipman Loaded" "20 items from fsjal ready."

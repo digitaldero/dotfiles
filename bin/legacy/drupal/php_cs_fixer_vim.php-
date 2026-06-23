@@ -1,0 +1,34 @@
+#!/usr/bin/php
+<?php
+
+/**
+ * by Chris Herberte.
+ */
+error_reporting(0);
+$code = stream_get_contents(fopen('php://stdin', 'r'));
+
+if (FALSE !== $code) {
+
+  // php_cs_fixer
+  $code = php_cs_fixer($code);
+
+  // remove multiple blank lines. leave one.
+  // $code = preg_replace("/\n\n+/", "\n\n", trim($code));
+  print $code;
+} else {
+  print 'An error occurred while processing.';
+}
+
+function php_cs_fixer($code) {
+  $tmp = tempnam(sys_get_temp_dir(), 'php_cs_fixer_');
+  $file = $tmp . '.php';
+  rename($tmp, $file);
+  file_put_contents($file, $code);
+  // system('php-cs-fixer -q fix ' . $file);
+  system('php-cs-fixer -q --config="/home/chris/.config/php_cs_fixer_config.php" fix ' . $file);
+
+  $code = file_get_contents($file);
+  unlink($file);
+
+  return $code;
+}

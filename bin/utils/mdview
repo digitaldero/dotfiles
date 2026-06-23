@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Ensure a markdown file was provided
+if [ -z "$1" ] || [ ! -f "$1" ]; then
+    echo "Usage: mdview <file.md>"
+    exit 1
+fi
+
+# Define paths for temporary HTML file
+TMP_HTML=$(mktemp /tmp/mdview_XXXXXX.html)
+
+# Clean, responsive CSS stylesheet (GitHub-inspired theme)
+CSS='body{max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;color:#24292e;line-height:1.6;}
+code{background:#f6f8fa;padding:2px 4px;border-radius:3px;font-family:monospace;}
+pre{background:#f6f8fa;padding:16px;overflow:auto;border-radius:6px;}
+pre code{padding:0;background:none;}
+h1,h2,h3{border-bottom:1px solid #eaecef;padding-bottom:5px;}'
+
+# 1. Convert MD to HTML and embed the stylesheet inline
+pandoc "$1" --metadata title="Markdown Preview" -M header-includes="<style>$CSS</style>" -s -o "$TMP_HTML"
+
+# 2. Open the file directly in Google Chrome
+google-chrome "$TMP_HTML" &
+
+# 3. Give Chrome a brief moment to read the file before deleting it
+sleep 1
+rm "$TMP_HTML"
+

@@ -1,0 +1,18 @@
+# Backup archives
+bin.tgz
+*.tgz
+*.tar.gz
+
+# Editor / OS junk
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Tool caches
+.php-cs-fixer.cache

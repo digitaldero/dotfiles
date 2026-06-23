@@ -1,0 +1,38 @@
+# yazi keymap.toml - Clean modern syntax
+# Raw CSI attempts were failing to parse because TOML basic strings do not
+# like raw control characters or exotic unicode escapes for ESC.
+#
+# The real solution for Kitty + F-keys is documented below.
+
+# ------------------------------------------------------------------
+# Smoke tests (these should always work)
+# ------------------------------------------------------------------
+[[manager.prepend_keymap]]
+on   = "<C-t>"
+run  = 'shell "notify-send \"✅ Ctrl+T works - keymap is active\" " --block'
+desc = "Smoke test Ctrl+T"
+
+[[manager.prepend_keymap]]
+on   = "<C-g>"
+run  = 'shell "notify-send \"✅ Ctrl+G works\" " --block'
+desc = "Smoke test Ctrl+G"
+
+# ------------------------------------------------------------------
+# F9 / F12 - symbolic names
+# These only work reliably when Kitty's enhanced keyboard protocol is disabled.
+# See the wrapper script (yazi in ~/dotfiles/bin) that sets KITTY_KB_PROTOCOL=0
+# ------------------------------------------------------------------
+[[manager.prepend_keymap]]
+on   = "<F9>"
+run  = 'shell "$HOME/dotfiles/bin/media/f9-media-menu" "$0" --block'
+desc = "Media Operations (F9)"
+
+[[manager.prepend_keymap]]
+on   = "<F12>"
+run  = 'shell "notify-send \"✅ Symbolic <F12> worked\" " --block'
+desc = "Test symbolic F12"
+
+[[manager.prepend_keymap]]
+on   = "F"
+run  = 'shell "notify-send \"✅ on=F (Shift+F?) worked\" " --block'
+desc = "Test on=F"

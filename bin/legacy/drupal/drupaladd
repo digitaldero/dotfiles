@@ -1,0 +1,71 @@
+#!/home/chris/.config/composer/vendor/bin/drush
+<?php
+
+/**
+ * @file
+ * Drupal 7 Drush Installation - Should work for Drupal 8 also with new makefile.
+ */
+
+// Clear screen.
+drush_print("\033c");
+
+// Prompt for site prefix.
+$site_prefix = drush_prompt('Dev subdomain prefix (also used for database name)');
+$build_path = '/var/www/' . $site_prefix . '.dev.xweb.com.au/htdocs';
+
+// Drush make (xweb-drupal-7.make) to install core and base modules.
+$make_file = '/var/www/TEMPLATE/drupal7-installer/xweb-drupal-7.make';
+drush_invoke('make', array($make_file, $build_path));
+
+// Symlink to xtools (optionally set git repo in makefile).
+symlink('/var/www/TEMPLATE/drupal7-xtools', $build_path . '/sites/all/modules/xtools');
+
+// Change to the new install root.
+chdir($build_path);
+
+// Get required values for site.
+$site_name = drush_prompt('Site Name');
+drush_set_context('DRUSH_SELECTED_DRUPAL_ROOT', $build_path);
+drush_set_option('db-url', 'mysql://drupal:drup41@localhost/' . $site_prefix . '_drupal');
+
+// Configure site information.
+drush_set_option('site-name', $site_name);
+drush_set_option('site-mail', 'chrisherberte@gmail.com');
+
+// Configure su uid-1 user.
+drush_set_option('account-name', 'root');
+drush_set_option('account-pass', '63a9f0ea7bb98050');
+drush_set_option('account-mail', 'chrisherberte@gmail.com');
+
+// Install based on xprofile profile.
+$install_args = array(
+  'xprofile',
+  // 'minimal',.
+  'install_configure_form.site_default_country=AU',
+  'install_configure_form.date_default_timezone=Australia/Brisbane',
+  'install_configure_form.update_status_module=FALSE',
+);
+drush_invoke('site-install', $install_args);
+
+// Configure Admin user.
+$user = array(
+  'name' => 'admin',
+  'pass' => 'letmein',
+  'mail' => 'chris@localhost.localdomain',
+  'access' => '0',
+  'status' => 1,
+);
+drush_user_get_class()->create($user);
+
+// Add role and users to role.
+drush_role_create('admin', 3);
+drush_user_add_role('admin', 'admin');
+
+// Add permissions to admin role.
+drush_role_add_perm(3, 'administer site configuration, administer users, bypass node access, administer nodes, access content overview, access site in maintenance mode, use text format html, access xtools');
+
+// Switch on Ckeditor for HTML.
+drush_variable_set('xckeditor_filter_formats', array('html' => 'HTML'));
+
+// Open new site login in new tab.
+exec('google-chrome http://' . $site_prefix . '.dev.xweb.com.au/user');

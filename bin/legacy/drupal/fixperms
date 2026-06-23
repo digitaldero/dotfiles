@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ "${PWD##*/}" == "files" ]; then
+
+sudo chmod 0775 .
+sudo chown chris:www-data . -R
+find . -type d -exec chmod 0775 {} \;
+find . -type f -exec chmod 0664 {} \;
+
+
+else
+  echo "Script must be run from the files directory."
+fi
+

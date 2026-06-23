@@ -1,0 +1,46 @@
+#!/bin/bash
+
+TARGET_PEAK="-1.0"
+OUTPUT_DIR="normalized_peaks"
+AUDIO_CODEC="libmp3lame"
+AUDIO_BITRATE="192k"
+
+mkdir -p "$OUTPUT_DIR"
+shopt -s nullglob
+
+for input in *.mp3; do
+  echo "================================================="
+  echo "Peak Normalizing: $input"
+  echo "================================================="
+
+  # Pass 1: Find the maximum volume peak (in dB)
+  # This parses FFmpeg's volumedetect filter output
+  max_volume=$(ffmpeg -i "$input" -af "volumedetect" -f null /dev/null 2>&1 | grep "max_volume" | awk '{print $5}')
+
+  echo "Current Max Volume: $max_volume dB"
+
+  if [ -z "$max_volume" ]; then
+    echo "Could not parse volume for $input. Skipping."
+    continue
+  fi
+
+  # Pass 2: Calculate required adjustment
+  # Use 'bc' for floating-point math to find out how much to boost/cut
+  # Formula: Gain = Target_Peak - Max_Volume
+  # e.g., If max is -10dB and target is -1dB, we need +9dB gain.
+  gain=$(echo "$TARGET_PEAK - ($max_volume)" | bc)
+
+  echo "Applying Gain Adjustment: ${gain}dB"
+
+  # Apply the exact volume adjustment
+  ffmpeg -y -i "$input" \
+    -af "volume=${gain}dB" \
+    -c:a "$AUDIO_CODEC" \
+    -b:a "$AUDIO_BITRATE" \
+    "$OUTPUT_DIR/$input"
+
+  echo "Saved to: $OUTPUT_DIR/$input"
+  echo ""
+done
+
+echo "All files peak-normalized to $TARGET_PEAK dB!"

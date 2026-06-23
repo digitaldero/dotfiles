@@ -1,0 +1,51 @@
+#!/bin/bash
+# F9 Media Operations Menu for Yazi
+# Always shows a menu (good for debugging). Operates on the hovered file only.
+
+file="$1"
+media_dir="$HOME/dotfiles/bin/media"
+
+menu_items=()
+
+if [ -z "$file" ] || [ ! -f "$file" ]; then
+    menu_items+=("No file hovered|")
+else
+    mime=$(file --mime-type -b "$file")
+    ext="${file##*.}"
+    ext="${ext,,}"
+
+    if [[ "$mime" == video/* || "$ext" =~ ^(mp4|mkv|webm|mov|avi)$ ]]; then
+        menu_items+=("Convert to MP4|to_mp4")
+        menu_items+=("Make Telegram GIF|make_telegram_gif")
+        menu_items+=("Crop Video|crop_video")
+        menu_items+=("Extract Audio to MP3|to_mp3")
+    elif [[ "$mime" == audio/* || "$ext" =~ ^(mp3|flac|wav|opus|m4a)$ ]]; then
+        menu_items+=("Strip Metadata|strip_mp3")
+        menu_items+=("Compress MP3|compress_mp3")
+        menu_items+=("Convert to MP3|to_mp3")
+        menu_items+=("Preview Audio|preview_mp3")
+    elif [[ "$mime" == image/* || "$ext" =~ ^(png|jpg|jpeg|webp|gif)$ ]]; then
+        menu_items+=("No special ops for images yet (use 'o' to open)|")
+    else
+        menu_items+=("No actions for this file type|")
+    fi
+fi
+
+# Always show the menu (even if only one "no action" item)
+choice=$(printf "%s\n" "${menu_items[@]}" | gum choose --header "Media Operations")
+
+if [ -z "$choice" ]; then
+    exit 0
+fi
+
+script_name="${choice##*|}"
+
+if [ -n "$script_name" ] && [ -x "$media_dir/$script_name" ]; then
+    "$media_dir/$script_name" "$file"
+else
+    if [[ "$script_name" == "" ]]; then
+        dunstify -u low "Media Menu" "No action selected or available for this file"
+    else
+        dunstify -u critical "Media Menu" "Script not found: $script_name"
+    fi
+fi

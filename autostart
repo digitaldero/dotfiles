@@ -1,0 +1,10 @@
+#export G_SLICE=always-malloc
+#pcmanfm --desktop &
+#tint2 &
+xinput --set-prop 11 "libinput Accel Speed" 1
+lxpanel &
+volumeicon &
+blueman-applet &
+lxpolkit &
+parcellite & #clipboard
+dunst & #notis

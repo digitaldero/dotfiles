@@ -1,0 +1,28 @@
+set expandtab      " dont convert 8 spaces to tab
+set hlsearch       " highlight search terms show search matches as you type
+set mouse=a        " mouse mode a
+set nocompatible   " dont emulate old vi
+set number         " Line numbers
+set shiftwidth=2
+set smartcase      " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set tabstop=2      " tab key insert 2 spaces
+set showtabline=2  " always show tab bar
+set encoding=utf8  " fix for remote ssh vim encoding
+
+source /usr/share/vim/vim81/mswin.vim
+colorscheme base16-gruvbox-dark-chris
+
+set termguicolors
+
+" F3 toggle line numbers
+map <F3> :set invnumber<CR>
+
+highlight ExtraWhitespace guibg=red ctermbg=red
+match ExtraWhitespace /\s\+$/
+
+" netrw / nerdtree replacement
+nnoremap <C-t> :Texplore<CR>
+inoremap <C-t> <Esc>:Texplore<CR>
+
+syntax on
+

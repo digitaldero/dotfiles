@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ! command -v ffmpeg &>/dev/null; then
+  echo "Error: ffmpeg is not installed."
+  exit 1
+fi
+
+mkdir -p compressed_mp3s
+
+for file in *.mp3; do
+  [ -e "$file" ] || continue
+  echo "Stripping artwork and compressing: $file..."
+
+  # -vn removes the 1080p PNG artwork completely
+  # -codec:a libmp3lame -q:a 4 keeps the audio quality great
+  #ffmpeg -i "$file" -vn -codec:a libmp3lame -q:a 4 "compressed_mp3s/$file" -loglevel error -y
+  ffmpeg -i "$file" -vn -map_metadata -1 -fflags +bitexact -codec:a libmp3lame -q:a 4 "compressed_mp3s/$file" -loglevel error -y
+done
+
+echo "Done! Check your 'compressed_mp3s' folder now."

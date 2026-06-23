@@ -1,0 +1,32 @@
+#!/bin/bash
+# Strip metadata from audio file and sanitize filename
+
+if [ -z "$1" ]; then
+    echo "Usage: strip_mp3 <audio_file>"
+    exit 1
+fi
+
+input="$1"
+
+if [ ! -f "$input" ]; then
+    dunstify -u critical "strip_mp3" "File not found: $input"
+    exit 1
+fi
+
+dir=$(dirname "$input")
+base=$(basename "$input")
+name="${base%%.*}"
+ext="${base##*.}"
+
+# Sanitize filename (letters, numbers, underscores only, collapse multiple underscores)
+sanitized=$(echo "$name" | tr -cs '[:alnum:]_' '_' | sed 's/_\+/_/g; s/^_//; s/_$//')
+
+output="$dir/${sanitized}_out.mp3"
+
+ffmpeg -i "$input" -map 0:a -map_metadata -1 -c:a copy "$output" -y 2>/dev/null
+
+if [ $? -eq 0 ]; then
+    dunstify -u normal "strip_mp3" "Stripped: $(basename "$output")"
+else
+    dunstify -u critical "strip_mp3" "Failed: $base"
+fi

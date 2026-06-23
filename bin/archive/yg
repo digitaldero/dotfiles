@@ -1,0 +1,5 @@
+#!/bin/bash
+#youtube-dl -i --extract-audio --audio-format mp3 "$1"
+#youtube-dl -i --extract-audio --audio-format mp3 --audio-quality 0 --prefer-ffmpeg "$1"
+#yt-dlp -x --audio-format best --audio-format mp3 -o "%(title)s.%(ext)s" "$1"
+yt-dlp -x "$1"

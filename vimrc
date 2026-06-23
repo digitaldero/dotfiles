@@ -1,0 +1,200 @@
+" Note: on new install, CTRL-c / CTRL-v will not work until vim-gtk3 is installed
+" Rewrite for vim8
+set autochdir      " Automatically change the current directory on tab change
+set colorcolumn=+1 " hilight column 81
+set cursorline
+set expandtab      " dont convert 8 spaces to tab
+set guitablabel=%t " tab label format
+set hlsearch       " highlight search terms show search matches as you type
+set laststatus=2   " always show status bar
+set mouse=a        " mouse mode a
+set nocompatible   " dont emulate old vi
+set number         " Line numbers
+set shiftwidth=2
+set showtabline=2  " always show tab bar
+set smartcase      " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set tabstop=2      " tab key insert 2 spaces
+set title          " set xterm to current title
+
+" Kitty sets TERM=xterm-kitty; vim needs term=kitty for resize redraw
+if $TERM ==# 'xterm-kitty'
+  set term=kitty
+endif
+
+" Enable list mode by default (or toggle it with :set list)
+set list
+
+" Define how to display invisible characters
+" 'tab:» ' will show a » followed by a space for a tab
+" 'trail:·' will show a dot for any trailing spaces
+set listchars=tab:»\ ,trail:·,extends:›,precedes:‹,nbsp:·
+
+source /usr/share/vim/vim91/mswin.vim
+
+set termguicolors
+" colorscheme xoria256
+" colorscheme base16-gruvbox-dark-pale
+colorscheme base16-gruvbox-dark-chris
+
+let g:airline_powerline_fonts = 1
+
+" airline tabs
+let g:airline#extensions#tabline#enabled = 1           " enable airline tabline
+let g:airline#extensions#tabline#show_close_button = 0 " remove 'X' at the end of the tabline
+let g:airline#extensions#tabline#tabs_label = ''       " can put text here like BUFFERS to denote buffers (show nothing)
+let g:airline#extensions#tabline#buffers_label = ''    " can put text here like TABS to denote tabs (show nothing)
+let g:airline#extensions#tabline#fnamemod = ':t'       " disable file paths in the tab
+let g:airline#extensions#tabline#show_tab_count = 0    " dont show tab numbers on the right
+let g:airline#extensions#tabline#show_buffers = 0      " dont show buffers in the tabline
+let g:airline#extensions#tabline#show_splits = 0       " disables the buffer name that displays on the right of the tabline
+let g:airline#extensions#tabline#show_tab_nr = 0       " disable tab numbers
+let g:airline#extensions#tabline#show_tab_type = 0     " disables the weird ornage arrow on the tabline
+let g:airline#extensions#tabline#left_sep = ''         " make tabs square not pointy
+let g:airline#extensions#tabline#left_alt_sep = ''     " make tabs square not pointy
+
+" F3 toggle line numbers
+map <F3> :set invnumber<CR>
+
+" Indent / outdent with tab
+vmap <TAB> >gv
+vmap <S-TAB> <gv
+
+" Hilight extra whitespace
+highlight ExtraWhitespace guibg=red ctermbg=red
+" match ExtraWhitespace /\s\+$/
+" Better trailing whitespace highlight
+autocmd ColorScheme * highlight ExtraWhitespace guibg=red ctermbg=red
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+
+" Terminal resize handling (kitty sends SIGWINCH on drag/maximize)
+set ttyfast
+autocmd VimResized * redraw! | mode
+autocmd FocusGained * checktime | redraw!
+
+" NERDTree plugin"
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeQuitOnOpen=1
+let NERDTreeShowHidden=1
+nnoremap <C-t> :tabnew<CR>:NERDTree<CR>
+inoremap <C-t> <Esc>:tabnew<CR>:NERDTree<CR>
+
+" tab colour
+" highlight TabLineSel term=bold cterm=bold ctermfg=16 ctermbg=250
+
+" === Formatting (using the wrapper script pattern you liked) ===
+" The custom *vim_*.php wrappers exist to work around cases where external
+" formatters could leave the buffer empty (the old reason for these scripts).
+" They read stdin -> temp file -> run tool with your config -> read result back.
+
+" HTML (including JS inside <script> and CSS inside <style>)
+" Uses js-beautify --type html with Drupal 7-ish rules (2 spaces, etc.)
+" See ~/dotfiles/bin/vim_html_format.php and ~/dotfiles/.jsbeautify-d7.json
+autocmd FileType html,ejs noremap <buffer> <c-f> :call HtmlFormat()<cr>
+
+" Standalone JS / JSON now using the same wrapper script approach
+" for consistency, immediate effect after editing the script,
+" and protection against empty buffer.
+autocmd FileType javascript noremap <buffer> <c-f> :call JsFormat()<cr>
+autocmd FileType json       noremap <buffer> <c-f> :call JsonFormat()<cr>
+
+" CSS (standalone) - now using js-beautify for modernity/consistency
+" with the HTML + JS-in-HTML formatter. Wrapper follows the same
+" reliable temp-file pattern.
+autocmd FileType css noremap <buffer> <c-f> :call CssFormat()<cr>
+
+function! CssFormat()
+  let save_pos = getpos(".")
+  :exe '%!vim_css_format.php'
+  call setpos('.', save_pos)
+endfunction
+
+function! HtmlFormat()
+  let save_pos = getpos(".")
+  :exe '%!vim_html_format.php'
+  call setpos('.', save_pos)
+endfunction
+
+function! JsFormat()
+  let save_pos = getpos(".")
+  :exe '%!vim_js_format.php js'
+  call setpos('.', save_pos)
+endfunction
+
+function! JsonFormat()
+  let save_pos = getpos(".")
+  :exe '%!vim_js_format.php json'
+  call setpos('.', save_pos)
+endfunction
+
+"autocmd FileType php noremap <buffer> <c-f> :call PHPCoderFormat()<cr>
+"autocmd FileType php noremap <buffer> <c-f> :call PhpCsFixerFixFile()<cr>
+
+" vim plugin was not good
+autocmd FileType php noremap <buffer> <c-f> :call PhpCsFixerVim()<cr>
+
+autocmd FileType sh noremap <buffer> <c-f> :call ShFmt()<cr>
+autocmd FileType cs,arduino,c,cpp noremap <buffer> <c-f> :call ClangFormat()<cr>
+autocmd FileType lua noremap <buffer> <c-f> :call LuaFormat()<cr>
+autocmd FileType python noremap <buffer> <c-f> :call PyFormat()<cr>
+
+" Type 'd7doc' and hit Space to insert a Drupal 7 function header
+" autocmd FileType php iabbrev <buffer> d7doc /**<CR> * Implements hook_().<CR> */
+
+" Drupal file extensions
+" au BufNewFile,BufRead *.install setf php
+" Tell Vim to treat Drupal files as PHP
+autocmd BufRead,BufNewFile *.module,*.inc,*.install,*.test,*.profile set filetype=php
+
+" Template file extensions
+au BufNewFile,BufRead *.tpl.php set filetype=html
+au BufNewFile,BufRead *.ejs set filetype=html
+
+" use php coder_format function to format php
+" TODO move from ~/bin/ to ~/dotfiles/vim/somewhere
+"function! PHPCoderFormat()
+"  let save_pos = getpos(".")
+"  :exe '%!coder_format_vim.php'
+"  call setpos('.', save_pos)
+"endfunction
+
+function! PhpCsFixerVim()
+  let save_pos = getpos(".")
+  :exe '%!php_cs_fixer_vim.php'
+  call setpos('.', save_pos)
+endfunction
+
+" sudo snap install shfmt
+function! ShFmt()
+  let save_pos = getpos(".")
+  :exe '%!shfmt -i 2'
+  call setpos('.', save_pos)
+endfunction
+
+" sudo apt-get install clang-format
+function! ClangFormat()
+  let save_pos = getpos(".")
+  :exe '%!clang-format-11 ' . expand('%')
+  call setpos('.', save_pos)
+endfunction
+
+" https://github.com/csscomb/csscomb.js
+"function! CSScomb()
+"  let save_pos = getpos(".")
+"  :exe '%!vim_csscomb.php ' . expand('%')
+"  call setpos('.', save_pos)
+"endfunction
+
+"function! LuaFormat()
+"  let save_pos = getpos(".")
+"  :exe '%!luafmt --stdin -i 2 -l 999'
+"  call setpos('.', save_pos)
+"endfunction
+
+function! PyFormat()
+  let save_pos = getpos(".")
+  :exe '%!yapf3 --style="{indent_width: 2}"'
+  call setpos('.', save_pos)
+endfunction
+

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# CONFIGURATION: Absolute path to your high-quality square logo
+LOGO_FILE="$HOME/bin/rnr-logo.jpg"
+
+# Check if a video file was provided
+if [ -z "$1" ]; then
+    echo "Error: Please provide a video file."
+    echo "Usage: $0 <video_file>"
+    exit 1
+fi
+
+INPUT_FILE="$1"
+
+# Check if the video file exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: Video file '$INPUT_FILE' not found."
+    exit 1
+fi
+
+# Check if the logo file exists in your ~/bin/ directory
+if [ ! -f "$LOGO_FILE" ]; then
+    echo "Error: Logo file not found at '$LOGO_FILE'"
+    echo "Please ensure the image is named correctly and sits in your ~/bin/ folder."
+    exit 1
+fi
+
+# Extract filename and extension
+FILENAME="${INPUT_FILE%.*}"
+EXTENSION="${INPUT_FILE##*.}"
+OUTPUT_FILE="${FILENAME}_preview.${EXTENSION}"
+
+echo "Processing: $INPUT_FILE"
+echo "Using Logo: $LOGO_FILE (Auto-scaling to 500x500)"
+echo "Output:     $OUTPUT_FILE"
+echo "--------------------------------------------------"
+
+#VID_W=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$INPUT_FILE")
+#VID_H=$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$INPUT_FILE")
+#VID_FPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$INPUT_FILE")
+#ffmpeg -i "$INPUT_FILE" -loop 1 -framerate $VID_FPS -i "$LOGO_FILE" -filter_complex \
+#  "[0:v]trim=0:26,setpts=PTS-STARTPTS[v_clip]; \
+#   [1:v]scale=${VID_W}:${VID_H},setsar=1,fps=${VID_FPS},format=yuv420p,fade=t=in:st=0:d=1[logo_ready]; \
+#   [v_clip][logo_ready]xfade=transition=fade:duration=2:offset=24[v_final]; \
+#   [0:a]atrim=0:30,asetpts=PTS-STARTPTS,afade=t=out:st=27:d=3[a_final]" \
+#  -map "[v_final]" -map "[a_final]" -shortest \
+#  -c:v libx264 -crf 20 -preset fast \
+#  -c:a aac -b:a 256k \
+#  -t 30 \
+#  "$OUTPUT_FILE" -y
+
+VID_W=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 "$INPUT_FILE")
+VID_H=$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$INPUT_FILE")
+VID_FPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 "$INPUT_FILE")
+ffmpeg -i "$INPUT_FILE" -loop 1 -framerate $VID_FPS -i "$LOGO_FILE" -filter_complex \
+  "[0:v]trim=0:26,setpts=PTS-STARTPTS,format=yuv420p[v_clip]; \
+   [1:v]scale=${VID_W}:${VID_H},setsar=1,fps=${VID_FPS},format=yuv420p,fade=t=in:st=0:d=1[logo_ready]; \
+   [v_clip][logo_ready]xfade=transition=fade:duration=2:offset=24[v_final]; \
+   [0:a]atrim=0:30,asetpts=PTS-STARTPTS,afade=t=out:st=27:d=3[a_final]" \
+  -map "[v_final]" -map "[a_final]" -shortest \
+  -c:v libx264 -crf 20 -preset fast -pix_fmt yuv420p \
+  -c:a aac -b:a 256k \
+  -t 30 \
+  "$OUTPUT_FILE" -y
+
+
+echo "--------------------------------------------------"
+echo "Done! Your 33-second preview is ready next to your original file."

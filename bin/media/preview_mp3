@@ -1,0 +1,26 @@
+#!/bin/bash
+SOCKET="/tmp/mpv-preview-socket"
+LASTFILE="/tmp/mpv-preview-lastfile"
+
+TARGET_FILE="$1"
+
+if pgrep -f "mpv --no-video" > /dev/null 2>&1; then
+  EXISTING_PID=$(pgrep -f "mpv --no-video")
+  LAST=$(cat "$LASTFILE" 2>/dev/null)
+
+  if [[ "$LAST" == "$TARGET_FILE" ]]; then
+    # Same file — stop
+    kill "$EXISTING_PID" 2>/dev/null
+    rm -f "$LASTFILE"
+    exit 0
+  else
+    # Different file — kill current and fall through to play new
+    kill "$EXISTING_PID" 2>/dev/null
+    rm -f "$SOCKET"
+  fi
+fi
+
+echo "$TARGET_FILE" > "$LASTFILE"
+rm -f "$SOCKET"
+
+mpv --no-video --keep-open=no --input-ipc-server="$SOCKET" "$TARGET_FILE" &

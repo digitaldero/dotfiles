@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * System log current temp, load, top process / user.
+ * TIMESTAMP  TEMP LOAD FREEKB CPU MEM USER  PROCESS; X3
+ * 1581910802 42   0.00 246288 0.7,1.2,chris,systemd;0.3,0.5,chris,bash;0.1,1.4,root,systemd
+ * LOAD is load average for past 1 minute
+ * CPU/MEM are percentage values
+ */
+
+/**
+ * Get top 3 high CPU processes.
+ */
+exec('ps -Ao %cpu:1,%mem,user,comm --sort=-%cpu --no-headers | head -3', $ps);
+$proc = [];
+foreach ($ps as $cmd) {
+  $proc[] = implode(',', array_map('trim', preg_split('/\s+/', $cmd)));
+}
+
+/**
+ * Build stats for logging.
+ */
+$stat = array(
+  'time' => time(),
+  'temp' => round(rtrim(file_get_contents('/sys/class/thermal/thermal_zone0/temp')) / 1000 ),
+  'load' => preg_split('/\s+/', file_get_contents('/proc/loadavg'))[0],
+  'free' => preg_replace(array(' /\D/', '/\s/'), '', preg_split('/\n/ ', file_get_contents('/proc/meminfo'))[1]),
+  'proc' => implode(';', $proc),
+);
+
+print implode(' ', $stat) . PHP_EOL;

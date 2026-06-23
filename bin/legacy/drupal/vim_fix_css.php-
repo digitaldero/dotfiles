@@ -1,0 +1,47 @@
+#!/usr/bin/php
+<?php
+
+/**
+ * by Chris Herberte
+ */
+
+error_reporting(0);
+
+$code = stream_get_contents(fopen('php://stdin', 'r'));
+
+if ($code !== FALSE) {
+  // remove multiple blank lines. leave one.
+  $code = preg_replace("/\n\n+/", "\n\n", trim($code));
+
+  // lower hex color codes.
+  $code = preg_replace_callback('/(#[0-9a-f]{3,6})/i', 'fixhex', $code);
+  print $code;
+}
+else {
+  print 'An error occurred while processing.';
+}
+
+/**
+ *
+ */
+function fixhex($matches) {
+  // as usual: $matches[0] is the complete match
+  // $matches[1] the match for the first subpattern
+  // enclosed in '(...)' and so on
+  $string = $matches[1];
+  return hex2short(strtolower($matches[1]));
+}
+
+function hex2short($string) {
+  if (!preg_match('/^#([0-9a-f]{6})$/i', $string, $matches)) {
+    return $string;
+  }
+
+  // See if we can convert to 3 char hex
+  $hex = $matches[1];
+  if ($hex[0] == $hex[1] && $hex[2] == $hex[3] && $hex[4] == $hex[5]) {
+    $string = '#' . $hex[0] . $hex[2] . $hex[4];
+  }
+
+  return $string;
+}

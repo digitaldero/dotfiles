@@ -1,0 +1,67 @@
+# Starship config - Tailored for the user
+# Based on Kanagawa Dragon colors + clean modern look
+# Works great in Kitty
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$character
+"""
+
+# Right side prompt (optional, can add time, cmd duration etc later)
+# right_format = "$cmd_duration"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"
+
+[username]
+style_user = "bold yellow"
+style_root = "bold red"
+format = "[$user]($style)@"
+show_always = true
+
+[hostname]
+ssh_symbol = "🌐 "
+style = "bold yellow"
+format = "[$hostname]($style) "
+
+[directory]
+style = "bold cyan"
+truncate_to_repo = true
+truncation_length = 4
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = "[$all_status$ahead_behind]($style) "
+conflicted = "⚔️ "
+ahead = "↑${count}"
+behind = "↓${count}"
+diverged = "↑${ahead_count}↓${behind_count}"
+untracked = "?"
+stashed = "≡"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "yellow"
+
+[time]
+disabled = true
+format = "[$time]($style) "
+time_format = "%H:%M"
+style = "dimmed white"

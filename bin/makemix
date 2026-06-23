@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# makemix.sh — plays all mp3s in current dir with bumpers between songs
+# Format: song (max 2min, fade out) → bumper (crossfade both ends) → song → ...
+# Requires: ffmpeg
+
+BUMPER_DIR="../bumpers"
+SONG_MAX=120       # trim songs to this many seconds
+SONG_FADE_OUT=5    # fade out duration at end of song
+SONG_INTO_BUMPER=3 # crossfade: song tail into bumper start
+BUMPER_INTO_SONG=3 # crossfade: bumper tail into next song start
+
+# ── checks ────────────────────────────────────────────────────────────────────
+
+if ! command -v ffmpeg &>/dev/null; then
+  echo "Error: ffmpeg is required." >&2; exit 1
+fi
+if [[ ! -d "$BUMPER_DIR" ]]; then
+  echo "Error: bumper directory '$BUMPER_DIR' not found." >&2; exit 1
+fi
+
+# ── gather files ──────────────────────────────────────────────────────────────
+
+mapfile -t songs       < <(find . -maxdepth 1 -name "*.mp3" | shuf)
+mapfile -t bumper_pool < <(find "$BUMPER_DIR" -maxdepth 1 -name "*.mp3" | shuf)
+
+[[ ${#songs[@]} -eq 0 ]]       && { echo "Error: no mp3s in current directory." >&2; exit 1; }
+[[ ${#bumper_pool[@]} -eq 0 ]] && { echo "Error: no mp3s in '$BUMPER_DIR'." >&2; exit 1; }
+
+echo "Found ${#songs[@]} songs and ${#bumper_pool[@]} bumpers."
+echo "Song max: ${SONG_MAX}s | Fade out: ${SONG_FADE_OUT}s | Song→Bumper: ${SONG_INTO_BUMPER}s | Bumper→Song: ${BUMPER_INTO_SONG}s"
+echo
+
+# ── pre-assign unique bumpers ─────────────────────────────────────────────────
+
+assigned_bumpers=()
+needed=${#songs[@]}
+pool=("${bumper_pool[@]}")
+
+while [[ ${#assigned_bumpers[@]} -lt $needed ]]; do
+  for (( j=0; j<${#pool[@]} && ${#assigned_bumpers[@]}<needed; j++ )); do
+    assigned_bumpers+=("${pool[$j]}")
+  done
+  if [[ ${#assigned_bumpers[@]} -lt $needed ]]; then
+    mapfile -t pool < <(printf '%s\n' "${bumper_pool[@]}" | shuf)
+    echo "(Reshuffling bumpers for next round)" >&2
+  fi
+done
+
+# ── helpers ───────────────────────────────────────────────────────────────────
+
+get_duration() {
+  ffprobe -v error -show_entries format=duration \
+    -of default=noprint_wrappers=1:nokey=1 "$1"
+}
+
+format_timestamp() {
+  local s="$1"
+  local m ss
+  m=$(awk "BEGIN { printf \"%d\", int($s/60) }")
+  ss=$(awk "BEGIN { printf \"%02d\", int($s)%60 }")
+  echo "${m}:${ss}"
+}
+
+pretty_name() {
+  echo "$1" | sed 's/__/ - /g; s/_/ /g'
+}
+
+# ── step 1: prepare songs (trim + fade out) ───────────────────────────────────
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+echo "Preparing songs..."
+prepared=()
+
+for i in "${!songs[@]}"; do
+  src="${songs[$i]}"
+  raw_dur=$(get_duration "$src")
+  dur=$(awk "BEGIN { print ($raw_dur > $SONG_MAX) ? $SONG_MAX : $raw_dur }")
+  fade_out_start=$(awk "BEGIN { v=$dur-$SONG_FADE_OUT; print (v<0?0:v) }")
+
+  prep="$TMPDIR/prep_$(printf '%03d' $i).mp3"
+
+  ffmpeg -y -loglevel error \
+    -i "$src" -t "$dur" \
+    -af "afade=t=out:st=${fade_out_start}:d=${SONG_FADE_OUT}" \
+    -codec:a libmp3lame -q:a 4 "$prep"
+
+  prepared+=("$prep")
+  echo "  ✓ $(basename "$src")  [$(format_timestamp "$dur")]"
+done
+echo
+
+# ── step 2: build single ffmpeg filtergraph ───────────────────────────────────
+# Inputs are interleaved: song0, bumper0, song1, bumper1, ...
+# Chain: [0:a][1:a]acrossfade→[s0b0]  [s0b0][2:a]acrossfade→[s0b0s1]  [s0b0s1][3:a]acrossfade→[s0b0s1b1] ...
+# Final output label is [out]
+
+echo "Building mix filtergraph..."
+
+total=${#songs[@]}
+inputs=()
+filter_parts=()
+prev_label=""
+input_idx=0
+
+for i in "${!songs[@]}"; do
+  inputs+=(-i "${prepared[$i]}")
+  song_idx=$input_idx
+  input_idx=$(( input_idx + 1 ))
+
+  inputs+=(-i "${assigned_bumpers[$i]}")
+  bump_idx=$input_idx
+  input_idx=$(( input_idx + 1 ))
+
+  if [[ $i -eq 0 ]]; then
+    # First: song0 → bumper0
+    out_label="ab0"
+    filter_parts+=("[${song_idx}:a][${bump_idx}:a]acrossfade=d=${SONG_INTO_BUMPER}:c1=tri:c2=tri[${out_label}]")
+    prev_label="$out_label"
+  else
+    # bumper(i-1) tail → song_i
+    bs_label="bs${i}"
+    filter_parts+=("[${prev_label}][${song_idx}:a]acrossfade=d=${BUMPER_INTO_SONG}:c1=tri:c2=tri[${bs_label}]")
+
+    if [[ $i -lt $(( total - 1 )) ]]; then
+      # song_i → bumper_i
+      ab_label="ab${i}"
+      filter_parts+=("[${bs_label}][${bump_idx}:a]acrossfade=d=${SONG_INTO_BUMPER}:c1=tri:c2=tri[${ab_label}]")
+      prev_label="$ab_label"
+    else
+      # Last song: song_i → bumper_i → [out]
+      filter_parts+=("[${bs_label}][${bump_idx}:a]acrossfade=d=${SONG_INTO_BUMPER}:c1=tri:c2=tri[out]")
+    fi
+  fi
+done
+
+# Edge case: only 1 song — rename last label to [out]
+if [[ $total -eq 1 ]]; then
+  # Replace [ab0] with [out] in last filter part
+  filter_parts[-1]="${filter_parts[-1]/[ab0]/[out]}"
+fi
+
+# Join filter parts with semicolons
+filter=$(printf '%s;' "${filter_parts[@]}")
+filter="${filter%;}"  # strip trailing semicolon
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTPUT="mix_${TIMESTAMP}.mp3"
+TRACKLIST="mix_${TIMESTAMP}.txt"
+
+ffmpeg -y -loglevel error \
+  "${inputs[@]}" \
+  -filter_complex "$filter" \
+  -map "[out]" \
+  -codec:a libmp3lame -q:a 4 \
+  "$OUTPUT"
+
+# ── step 3: tracklist timestamps ──────────────────────────────────────────────
+
+tracklist=()
+elapsed=0
+
+for i in "${!songs[@]}"; do
+  song_name=$(basename "${songs[$i]%.mp3}")
+  bumper="${assigned_bumpers[$i]}"
+
+  ts=$(format_timestamp "$elapsed")
+  tracklist+=("$ts  $(pretty_name "$song_name")")
+
+  prep_dur=$(get_duration "${prepared[$i]}")
+  bumper_dur=$(get_duration "$bumper")
+
+  bumper_ts=$(awk "BEGIN { v=$elapsed+$prep_dur-$SONG_INTO_BUMPER; print (v<0?0:v) }")
+  bts=$(format_timestamp "$bumper_ts")
+  tracklist+=("$bts  [bumper]")
+
+  elapsed=$(awk "BEGIN { v=$bumper_ts+$bumper_dur-$BUMPER_INTO_SONG; print (v<0?0:v) }")
+done
+
+{ echo '--TUNE IN--'; echo 'richnigga.wtf'; echo ''; printf '%s\n' "${tracklist[@]}"; } > "$TRACKLIST"
+
+echo
+echo "✓ Mix:       $OUTPUT  ($(du -h "$OUTPUT" | cut -f1))"
+echo "✓ Tracklist: $TRACKLIST"
+echo
+cat "$TRACKLIST"

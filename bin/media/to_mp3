@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# 1. Sanitize Filenames
+echo "Sanitizing filenames..."
+for file in *.m4a; do
+  # Skip if no m4a files exist
+  [ -e "$file" ] || continue
+
+  # Create new name:
+  # - Lowercase
+  # - Replace spaces/special chars with underscores
+  # - Remove any non-alphanumeric (except dots/underscores)
+  new_name=$(echo "$file" | tr '[:upper:]' '[:lower:]' | sed -e 's/[[:space:]]/_/g' -e 's/[^a-z0-9._]//g' -e 's/_\+/_/g')
+
+  # Rename if the name actually changed
+  if [ "$file" != "$new_name" ]; then
+    mv -v "$file" "$new_name"
+  fi
+done
+
+# 2. Convert m4a to mp3
+echo "Starting conversion..."
+for f in *.m4a; do
+  [ -e "$f" ] || continue
+
+  # Generate output filename by swapping extension
+  output="${f%.m4a}.mp3"
+
+  # -n: skip if file exists
+  # -i: input file
+  # -acodec libmp3lame: use standard mp3 encoder
+  # -aq 2: high quality VBR (~190 kbps)
+  ffmpeg -i "$f" -codec:a libmp3lame -q:a 2 "$output"
+
+  # Optional: Remove the original m4a file after successful conversion
+  # if [ $? -eq 0 ]; then rm "$f"; fi
+done
+
+echo "Done!"
