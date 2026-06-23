@@ -8,16 +8,17 @@ $hostname\
 $directory\
 $git_branch\
 $git_state\
-$git_status $character
+$git_status\
+$character
 """
 
 # Right side prompt (optional, can add time, cmd duration etc later)
 # right_format = "$cmd_duration"
 
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[❮](bold yellow)"
+success_symbol = " [❯](bold green)"
+error_symbol = " [❯](bold red)"
+vimcmd_symbol = " [❮](bold yellow)"
 
 [username]
 style_user = "bold yellow"
@@ -32,6 +33,7 @@ format = "[$hostname]($style) "
 
 [directory]
 style = "bold cyan"
+format = "[$path]($style)[$read_only]($read_only_style)"
 truncate_to_repo = true
 truncation_length = 4
 truncation_symbol = "…/"
@@ -44,7 +46,7 @@ truncation_length = 24
 
 [git_state]
 style = "bold yellow"
-format = " [$state( $progress_current/$progress_total)]($style)"
+format = "[ $state( $progress_current/$progress_total)]($style)"
 rebase = "REBASING"
 merge = "MERGING"
 revert = "REVERTING"
@@ -55,7 +57,7 @@ am_or_rebase = "AM/REBASE"
 
 [git_status]
 style = "bold red"
-format = " [$all_status$ahead_behind]($style)"
+format = "[ $all_status$ahead_behind]($style)"
 conflicted = "⚔️ "
 ahead = "↑${count}"
 behind = "↓${count}"
