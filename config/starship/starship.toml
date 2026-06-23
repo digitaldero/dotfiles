@@ -9,14 +9,14 @@ $directory\
 $git_branch\
 $git_state\
 $git_status\
- $character
+$character
 """
 
 # Right side prompt (optional, can add time, cmd duration etc later)
 # right_format = "$cmd_duration"
 
 [character]
-success_symbol = "[❯](bold green)"
+success_symbol = " [❯](bold green)"
 error_symbol = "[❯](bold red)"
 vimcmd_symbol = "[❮](bold yellow)"
 
