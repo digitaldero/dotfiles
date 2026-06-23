@@ -2,30 +2,34 @@
 
 Personal configuration files for a clean, portable development environment.
 
-## Font
+## Fonts
 
-This setup uses **JetBrains Mono Nerd Font** (no ligatures).
+### Terminal: DejaVu Sans Mono Nerd Font
 
-### Installation on a new machine
+Kitty uses **DejaVuSansM Nerd Font Mono** — DejaVu Sans Mono patched with Nerd Font icons (git glyphs, eza file icons, Starship symbols).
 
-1. Download the latest JetBrains Mono Nerd Font from:
-   https://github.com/ryanoasis/nerd-fonts/releases/latest
+Kitty tuning for crisp rendering:
 
-2. Extract the `.ttf` files into `~/dotfiles/fonts/` (or directly into `~/.fonts`).
+```
+font_size 11.2
+disable_ligatures always
+text_composition_strategy legacy
+```
 
-3. Run:
-   ```bash
-   fc-cache -f -v
-   ```
+Only four weights are needed in `fonts/`:
 
-The font files are checked into this repo under `fonts/` for easy copying.
+- `DejaVuSansMNerdFontMono-Regular.ttf`
+- `DejaVuSansMNerdFontMono-Bold.ttf`
+- `DejaVuSansMNerdFontMono-Oblique.ttf`
+- `DejaVuSansMNerdFontMono-BoldOblique.ttf`
 
-### Why this font?
+Download from: https://github.com/ryanoasis/nerd-fonts/releases (DejaVuSansMono package)
 
-- Excellent readability for long coding sessions.
-- Modern alternative to older fonts like DejaVu Sans Mono.
-- Works very well with Kitty + Starship.
-- Ligatures are disabled (`disable_ligatures always` in Kitty config) to preserve traditional rendering after 25+ years of muscle memory.
+Then run `fc-cache -f -v`.
+
+### GUI: Inter
+
+Inter is used for Openbox and other GUI elements. Kept in `fonts/`.
 
 ## Tools & Environment
 
