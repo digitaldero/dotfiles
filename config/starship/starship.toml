@@ -9,7 +9,7 @@ $directory\
 $git_branch\
 $git_state\
 $git_status\
-$character
+ $character
 """
 
 # Right side prompt (optional, can add time, cmd duration etc later)
@@ -40,7 +40,7 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bold purple"
-format = "[$symbol $branch]($style) "
+format = "[$symbol $branch]($style)"
 truncation_length = 24
 
 [git_state]
@@ -56,7 +56,7 @@ am_or_rebase = "AM/REBASE"
 
 [git_status]
 style = "bold red"
-format = "[$all_status$ahead_behind]($style) "
+format = " [$all_status$ahead_behind]($style) "
 conflicted = "⚔️ "
 ahead = "↑${count}"
 behind = "↓${count}"
