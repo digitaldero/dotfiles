@@ -38,7 +38,7 @@ truncation_length = 4
 truncation_symbol = "…/"
 
 [git_branch]
-symbol = ""
+symbol = " "
 style = "bold purple"
 format = "[$symbol $branch]($style)"
 truncation_length = 24
@@ -53,20 +53,31 @@ cherry_pick = "CHERRY-PICKING"
 bisect = "BISECTING"
 am = "AM"
 am_or_rebase = "AM/REBASE"
+#[git_state]
+#style = "bold yellow"
+#format = "[ $state( $progress_current/$progress_total)]($style)"
+#rebase = "󰘬"
+#merge = "󰘬"
+#cherry_pick = "󰘴"
+#revert = "󰑐"
+#bisect = "󰯇"
+#am = "󰆓"
+#am_or_rebase = "󰘬"
+
 
 [git_status]
 style = "bold red"
 format = " [$all_status$ahead_behind]($style)"
-conflicted = "⚔️ "
-ahead = "↑${count}"
-behind = "↓${count}"
-diverged = "↑${ahead_count}↓${behind_count}"
-untracked = "?"
-stashed = "≡"
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
+conflicted = "󰞇 "
+ahead = "󰁝${count}"
+behind = "󰁅${count}"
+diverged = "󰁝${ahead_count}󰁅${behind_count}"
+untracked = "󰋗 "
+stashed = "󰏗 "
+modified = "󰏫 "
+staged = "󰄬 "
+renamed = "󰁔 "
+deleted = "󰩺 "
 
 [cmd_duration]
 min_time = 2000
