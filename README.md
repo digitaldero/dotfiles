@@ -4,9 +4,13 @@ Personal configuration files for a clean, portable development environment.
 
 ## Fonts
 
-### Terminal: DejaVu Sans Mono Nerd Font
+### Terminal: DejaVu Sans Mono + Symbols Nerd Font Mono
 
-Kitty uses **DejaVuSansM Nerd Font Mono** — DejaVu Sans Mono patched with Nerd Font icons (git glyphs, eza file icons, Starship symbols).
+Kitty renders **plain DejaVu Sans Mono** for text (crisp, no ligatures). Icons come from a single symbols-only font via `symbol_map` in `config/kitty/kitty.conf`:
+
+- eza file icons (`ll`, `lg`, …)
+- Starship git branch glyph (` `)
+- powerline / nerd-font prompt symbols
 
 Kitty tuning for crisp rendering:
 
@@ -16,20 +20,38 @@ disable_ligatures always
 text_composition_strategy legacy
 ```
 
-Only four weights are needed in `fonts/`:
+**One font file** is checked into `fonts/`:
 
-- `DejaVuSansMNerdFontMono-Regular.ttf`
-- `DejaVuSansMNerdFontMono-Bold.ttf`
-- `DejaVuSansMNerdFontMono-Oblique.ttf`
-- `DejaVuSansMNerdFontMono-BoldOblique.ttf`
+- `SymbolsNerdFontMono-Regular.ttf` — from the [NerdFontsSymbolsOnly](https://github.com/ryanoasis/nerd-fonts/releases) package
 
-Download from: https://github.com/ryanoasis/nerd-fonts/releases (DejaVuSansMono package)
+DejaVu Sans Mono itself comes from the system (`fonts-dejavu` / `fonts-dejavu-core`). Optional Powerline-patched DejaVu files in `fonts/` are legacy; vim-airline symbols also work via Symbols Nerd Font.
 
-Then run `fc-cache -f -v`.
+Fontconfig fallback (for Alacritty and other apps) is in `config/fontconfig/conf.d/51-nerd-font-symbols.conf`. Symlink into `~/.config/fontconfig/conf.d/`, then:
+
+```bash
+fc-cache -f -v
+```
+
+Debug missing Kitty icons: `kitty --debug-font-fallback`
 
 ### GUI: Inter
 
 Inter is used for Openbox and other GUI elements. Kept in `fonts/`.
+
+## Prompt
+
+**Starship** provides the shell prompt (`eval "$(starship init bash)"` in `bashrc`). Config: `config/starship/starship.toml`.
+
+The git segment is two Starship modules:
+
+| Module | Shows |
+|---|---|
+| `git_branch` | Branch name with ` ` nerd-font symbol (purple) |
+| `git_status` | Repo state when dirty: `?` untracked, `!` modified, `+` staged, `↑`/`↓` ahead/behind, etc. |
+
+When the repo is clean, only the branch line appears. Run `starship explain` in any directory to see what each segment is.
+
+`[git_branch]` hides `main`/`master` when clean; `[git_state]` shows rebase/merge/etc.; dirty-state symbols come from `[git_status]`.
 
 ## Tools & Environment
 
