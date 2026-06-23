@@ -35,12 +35,12 @@ fi
 # eza - Modern ls replacement (replaces old ls aliases)
 # =====================
 alias ls='eza --color=always --group-directories-first'
-alias ll='eza -la --icons --color=always --group-directories-first'
+alias ll='eza -lag --icons --color=always --group-directories-first'
 alias la='eza -a --color=always --group-directories-first'
-alias l='eza -l --color=always --group-directories-first'
+alias l='eza -l --smart-group --color=always --group-directories-first'
 alias lt='eza --tree --level=2 --color=always --group-directories-first --icons'
-alias llt='eza -la --tree --level=2 --color=always --group-directories-first --icons'
-alias lg='eza -la --git --icons --color=always --group-directories-first'
+alias llt='eza -lag --tree --level=2 --color=always --group-directories-first --icons'
+alias lg='eza -lag --git --icons --color=always --group-directories-first'
 
 # Alert for long commands
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
