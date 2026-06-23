@@ -1,5 +1,4 @@
 # Starship config - Tailored for the user
-# Based on Kanagawa Dragon colors + clean modern look
 # Works great in Kitty
 
 format = """
@@ -33,7 +32,7 @@ format = "[$hostname]($style) "
 
 [directory]
 style = "bold cyan"
-format = "[$path]($style)[$read_only]($read_only_style)"
+format = "[$path ]($style)[$read_only]($read_only_style)"
 truncate_to_repo = true
 truncation_length = 4
 truncation_symbol = "…/"
