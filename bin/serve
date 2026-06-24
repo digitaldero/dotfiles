@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# serve.sh - Quick Python HTTP server + smart Chrome opener
+
+PORT="${1:-8000}"
+URL="http://localhost:$PORT"
+
+# Start the Python HTTP server in the background
+echo "Starting Python HTTP server on $URL"
+python3 -m http.server $PORT --bind 127.0.0.1 &
+SERVER_PID=$!
+
+# Give the server a moment to start
+sleep 1.5
+
+# Function to open in Chrome
+open_in_chrome() {
+  local path="$1"
+  if [[ -n "$path" ]]; then
+    google-chrome-stable "$URL/$path" 2>/dev/null ||
+      google-chrome "$URL/$path" 2>/dev/null ||
+      echo "Could not find Google Chrome command"
+  else
+    google-chrome-stable "$URL" 2>/dev/null ||
+      google-chrome "$URL" 2>/dev/null ||
+      echo "Could not find Google Chrome command"
+  fi
+}
+
+# Check for index.html
+if [[ -f "index.html" ]]; then
+  echo "Found index.html → Opening it"
+  open_in_chrome "index.html"
+else
+  # Find all .html files
+  HTML_FILES=($(find . -maxdepth 1 -name "*.html" -printf "%f\n" | sort))
+
+  if [[ ${#HTML_FILES[@]} -eq 0 ]]; then
+    echo "No .html files found. Server is running at $URL"
+  elif [[ ${#HTML_FILES[@]} -eq 1 ]]; then
+    echo "Found one HTML file: ${HTML_FILES[0]} → Opening it"
+    open_in_chrome "${HTML_FILES[0]}"
+  else
+    echo "Multiple HTML files found. Choose one:"
+    # Use gum to select
+    SELECTED=$(printf "%s\n" "${HTML_FILES[@]}" | gum choose --header "Select HTML file to open")
+
+    if [[ -n "$SELECTED" ]]; then
+      open_in_chrome "$SELECTED"
+    fi
+  fi
+fi
+
+echo "Server is running in background (PID $SERVER_PID)"
+echo "Press Ctrl+C here to stop the server, or run: kill $SERVER_PID"
+
+# Wait for user interrupt
+wait $SERVER_PID 2>/dev/null

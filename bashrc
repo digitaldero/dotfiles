@@ -150,3 +150,6 @@ eval "$(zoxide init bash --cmd cd)"
 
 # Common aliases
 alias z='zoxide query -i'          # interactive directory jumper
+
+# opencode
+export PATH=/home/chris/.opencode/bin:$PATH
