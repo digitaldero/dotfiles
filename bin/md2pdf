@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Check if an argument was provided
+if [ -z "$1" ]; then
+  echo "Error: No file specified."
+  echo "Usage: mdtopdf <file.md>"
+  exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$1" ]; then
+  echo "Error: File '$1' not found."
+  exit 1
+fi
+
+# Define output filename
+output="${1%.md}.pdf"
+
+# Perform conversion
+# We use commonmark + hard_line_breaks for better formatting consistency
+if pandoc "$1" -f commonmark+hard_line_breaks+pipe_tables \
+  --css=$HOME/.pandoc/epic.css \
+  --pdf-engine=wkhtmltopdf \
+  --pdf-engine-opt=--enable-local-file-access \
+  --pdf-engine-opt=--enable-external-links \
+  --pdf-engine-opt=--enable-javascript \
+  -o "$output"; then
+  echo "Success: PDF generated at $output"
+  xdg-open $output
+
+else
+  echo "Error: Conversion failed. Ensure 'pandoc' and 'wkhtmltopdf' are installed."
+  exit 1
+fi

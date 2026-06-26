@@ -1,0 +1,465 @@
+/* -------------------------------------------------------
+   modern.css — pandoc → wkhtmltopdf / HTML
+   Professional document theme
+------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/home/chris/.fonts/Inter-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/home/chris/.fonts/SpaceMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Page setup ─────────────────────────────────────── */
+
+@page {
+  margin: 28mm 22mm 24mm 22mm;
+  size: A4;
+}
+
+@page :first {
+  margin-top: 0;
+}
+
+/* ── Tokens ──────────────────────────────────────────── */
+
+:root {
+  --accent:       #2563EB;
+  --accent-light: #EFF6FF;
+  --ink:          #111827;
+  --ink-2:        #374151;
+  --ink-3:        #6B7280;
+  --rule:         #E5E7EB;
+  --rule-strong:  #D1D5DB;
+  --surface:      #F9FAFB;
+  --white:        #FFFFFF;
+
+  --font-body:  'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:  'Space Mono', 'Courier New', Courier, monospace;
+
+  --text-base:  10.5pt;
+  --line:       1.65;
+  --radius:     5px;
+}
+
+/* ── Base ─────────────────────────────────────────────  */
+
+html, body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--line);
+  color: var(--ink);
+  background: var(--white);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Cover / first-page header block ─────────────────── */
+/* Wrap your title block in a <div class="cover"> if needed.
+   Without it, the h1 gets the accent bar treatment below. */
+
+/* ── Headings ─────────────────────────────────────────  */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 0.5em 0;
+  page-break-after: avoid;
+}
+
+h1 {
+  font-size: 22pt;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 36pt 0 18pt 0;
+  border-bottom: 3px solid var(--accent);
+  margin-bottom: 24pt;
+  letter-spacing: -0.3px;
+}
+
+h2 {
+  font-size: 13.5pt;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 28pt;
+  margin-bottom: 8pt;
+  padding-bottom: 5pt;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-top: 18pt;
+  margin-bottom: 5pt;
+}
+
+h4 {
+  font-size: 10.5pt;
+  font-weight: 500;
+  color: var(--ink-3);
+  margin-top: 14pt;
+  margin-bottom: 4pt;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h5, h6 {
+  font-size: 10pt;
+  font-weight: 500;
+  color: var(--ink-3);
+  margin-top: 12pt;
+}
+
+/* ── Body text ────────────────────────────────────────  */
+
+p {
+  margin: 0 0 0.85em 0;
+  orphans: 3;
+  widows: 3;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  border-bottom-color: var(--accent);
+}
+
+strong, b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+em, i {
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+/* ── Lists ───────────────────────────────────────────── */
+
+ul, ol {
+  margin: 0 0 0.9em 0;
+  padding-left: 1.5em;
+}
+
+li {
+  margin-bottom: 0.3em;
+  line-height: var(--line);
+}
+
+li > ul,
+li > ol {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+ul li::marker {
+  color: var(--accent);
+}
+
+ol li::marker {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Blockquotes ──────────────────────────────────────  */
+
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.7em 1.1em;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--ink-2);
+  font-size: 10pt;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* ── Code ─────────────────────────────────────────────  */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 9pt;
+  background: var(--surface);
+  color: #1D4ED8;
+  padding: 1px 5px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 8.5pt;
+  line-height: 1.55;
+  background: #1E293B;
+  color: #E2E8F0;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 0 0 1.1em 0;
+  page-break-inside: avoid;
+}
+
+pre code {
+  font-family: var(--font-mono);
+  font-size: inherit;
+  background: none;
+  color: inherit;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  white-space: pre;
+}
+
+/* ── Tables ───────────────────────────────────────────  */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 0 0 1.2em 0;
+  page-break-inside: avoid;
+}
+
+thead {
+  background: var(--ink);
+  color: var(--white);
+}
+
+thead th {
+  font-weight: 600;
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 7pt 10pt;
+  text-align: left;
+  border: none;
+}
+
+tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+
+tbody tr:nth-child(odd) {
+  background: var(--white);
+}
+
+tbody td {
+  padding: 6pt 10pt;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-2);
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table outer border */
+table {
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* ── Horizontal rule ──────────────────────────────────  */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule-strong);
+  margin: 1.8em 0;
+}
+
+/* ── Figures & images ─────────────────────────────────  */
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  display: block;
+}
+
+figure {
+  margin: 1.2em 0;
+  page-break-inside: avoid;
+}
+
+figcaption {
+  font-size: 9pt;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ── Definition lists ──────────────────────────────────  */
+
+dl {
+  margin: 0 0 1em 0;
+}
+
+dt {
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 0.6em;
+}
+
+dd {
+  margin-left: 1.5em;
+  color: var(--ink-2);
+}
+
+/* ── Utilities ────────────────────────────────────────  */
+
+.page-break {
+  page-break-before: always;
+}
+
+.no-break {
+  page-break-inside: avoid;
+}
+
+/* Callout / info box — wrap content in a blockquote with class="info" */
+blockquote.info {
+  border-left-color: #059669;
+  background: #ECFDF5;
+}
+
+blockquote.warn {
+  border-left-color: #D97706;
+  background: #FFFBEB;
+}
+
+blockquote.danger {
+  border-left-color: #DC2626;
+  background: #FEF2F2;
+}
+
+/* ── Print optimisations ─────────────────────────────── */
+
+@media print {
+  body { background: white; }
+  a { color: var(--ink-2); border-bottom: none; }
+  pre { white-space: pre-wrap; word-break: break-all; }
+}
