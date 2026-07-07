@@ -6,8 +6,8 @@ Global {
   allign=left
   margin=0
   widthtype=percent
-  width=100
-  height=38
+  width=99
+  height=36
   transparent=0
   tintcolor=#000000
   alpha=0
@@ -19,7 +19,14 @@ Global {
   fontsize=10
   background=0
   backgroundfile=/usr/share/lxpanel/images/background.png
-  iconsize=32
+  iconsize=28
+}
+Plugin {
+  type=space
+  Config {
+    Size=6
+  }
+  expand=0
 }
 Plugin {
   type=menu
@@ -41,23 +48,23 @@ Plugin {
   }
 }
 Plugin {
+  type=space
+  Config {
+    Size=6
+  }
+}
+Plugin {
   type=launchbar
   Config {
     Button {
-      id=pcmanfm.desktop
+      id=google-chrome.desktop
     }
     Button {
       id=kitty.desktop
     }
     Button {
-      id=google-chrome.desktop
+      id=thunar.desktop
     }
-  }
-}
-Plugin {
-  type=space
-  Config {
-    Size=4
   }
 }
 Plugin {

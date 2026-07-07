@@ -37,7 +37,7 @@ sudo chmod 440 /etc/sudoers.d/$USER
 ```bash
 sudo apt update
 sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman feh pcmanfm scrot \
+  starship mc openbox lxpanel lxpolkit dunst blueman feh thunar scrot wsdd \
   network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
   lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme gh \
@@ -107,7 +107,15 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 fc-cache -f -v
 ```
 
-### 6. GTK/theme configuration
+### 6. WSDD (SMB network discovery)
+
+```bash
+sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now wsdd
+```
+
+### 7. GTK/theme configuration
 
 These settings are applied by `install.sh` via `config/gtk-3.0/settings.ini`
 and `config/openbox/rc.xml`. If running manually:
@@ -120,14 +128,14 @@ gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
 # Configured in rc.xml <theme><name>Numix</name> and gtk-3.0/settings.ini
 ```
 
-### 7. Performance tuning
+### 8. Performance tuning
 
 ```bash
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf
 # Add ,noatime to defaults in /etc/fstab for / and /boot
 ```
 
-### 8. Reboot
+### 9. Reboot
 
 ```bash
 sudo reboot

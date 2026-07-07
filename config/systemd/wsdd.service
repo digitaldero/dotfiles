@@ -1,0 +1,13 @@
+[Unit]
+Description=Web Services Discovery Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/wsdd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

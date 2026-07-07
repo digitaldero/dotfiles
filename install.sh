@@ -18,7 +18,7 @@ fi
 echo "Installing packages..."
 sudo apt update
 sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman feh pcmanfm scrot \
+  starship mc openbox lxpanel lxpolkit dunst blueman feh thunar scrot wsdd \
   network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
   lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
@@ -85,7 +85,13 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 
 fc-cache -f -v
 
-# --- Phase 6: Performance tuning ---
+# --- Phase 6: Network discovery ---
+echo "Enabling WSDD for SMB network discovery..."
+sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now wsdd 2>/dev/null || true
+
+# --- Phase 7: Performance tuning ---
 echo "Tuning system..."
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf >/dev/null
 if ! grep -q 'noatime' /etc/fstab; then
