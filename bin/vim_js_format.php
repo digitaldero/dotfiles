@@ -63,7 +63,7 @@ function format_js($code, $type) {
         $jsbeautify = 'js-beautify';
     }
 
-    $home = getenv('HOME') ?: '/home/chris';
+    $home = getenv('HOME');
 
     if ($type === 'json') {
         $config = $home . '/dotfiles/.jsbeautify-json.json';

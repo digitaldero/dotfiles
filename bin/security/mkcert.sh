@@ -1,1 +1,0 @@
-/home/chris/bin/create-certificate.sh
