@@ -91,6 +91,13 @@ ln -sf $HOME/dotfiles/config/openbox/rc.xml $HOME/.config/openbox/rc.xml
 mkdir -p $HOME/.config/gtk-3.0
 ln -sf $HOME/dotfiles/config/gtk-3.0/settings.ini $HOME/.config/gtk-3.0/settings.ini
 
+mkdir -p $HOME/.config/gtk-4.0
+ln -sf $HOME/dotfiles/config/gtk-4.0/settings.ini $HOME/.config/gtk-4.0/settings.ini
+
+# Override gsettings (takes priority over settings.ini files)
+gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
+gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+
 mkdir -p $HOME/.config/lxpanel/default/panels
 ln -sf $HOME/dotfiles/config/lxpanel/panel $HOME/.config/lxpanel/default/panels/panel
 
