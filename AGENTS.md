@@ -37,8 +37,8 @@ sudo chmod 440 /etc/sudoers.d/$USER
 ```bash
 sudo apt update
 sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman picom feh pcmanfm \
-  network-manager-gnome pasystray pavucontrol copyq cbatticon \
+  starship mc openbox lxpanel lxpolkit dunst blueman feh pcmanfm scrot \
+  network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
   lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme gh \
   pipewire pipewire-pulse wireplumber nodejs npm
@@ -90,6 +90,9 @@ ln -sf $HOME/dotfiles/config/openbox/rc.xml $HOME/.config/openbox/rc.xml
 
 mkdir -p $HOME/.config/gtk-3.0
 ln -sf $HOME/dotfiles/config/gtk-3.0/settings.ini $HOME/.config/gtk-3.0/settings.ini
+
+mkdir -p $HOME/.config/lxpanel/default/panels
+ln -sf $HOME/dotfiles/config/lxpanel/panel $HOME/.config/lxpanel/default/panels/panel
 
 mkdir -p $HOME/.config/fontconfig/conf.d
 ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
