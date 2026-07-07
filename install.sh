@@ -18,8 +18,8 @@ fi
 echo "Installing packages..."
 sudo apt update
 sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman picom feh \
-  network-manager-gnome pasystray pavucontrol copyq cbatticon \
+  starship mc openbox lxpanel lxpolkit dunst blueman picom feh pcmanfm \
+  network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
   lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
   pipewire pipewire-pulse wireplumber nodejs npm
@@ -64,6 +64,10 @@ ln -sf $HOME/dotfiles/config/starship/starship.toml $HOME/.config/starship.toml
 
 mkdir -p $HOME/.config/openbox
 ln -sf $HOME/dotfiles/autostart $HOME/.config/openbox/autostart
+ln -sf $HOME/dotfiles/config/openbox/rc.xml $HOME/.config/openbox/rc.xml
+
+mkdir -p $HOME/.config/gtk-3.0
+ln -sf $HOME/dotfiles/config/gtk-3.0/settings.ini $HOME/.config/gtk-3.0/settings.ini
 
 mkdir -p $HOME/.config/fontconfig/conf.d
 ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
@@ -84,5 +88,6 @@ echo ""
 echo "=============================="
 echo "  Setup complete!"
 echo "  Reboot: sudo reboot"
-echo "  Then:  xrdb -merge ~/.Xresources"
+echo "  Then:  openbox --reconfigure"
+echo "         xrdb -merge ~/.Xresources"
 echo "=============================="

@@ -37,10 +37,10 @@ sudo chmod 440 /etc/sudoers.d/$USER
 ```bash
 sudo apt update
 sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman picom feh \
-  network-manager-gnome xfce4-power-manager pasystray pavucontrol copyq \
+  starship mc openbox lxpanel lxpolkit dunst blueman picom feh pcmanfm \
+  network-manager-gnome pasystray pavucontrol copyq cbatticon \
   lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
-  dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
+  dmz-cursor-theme numix-gtk-theme papirus-icon-theme gh \
   pipewire pipewire-pulse wireplumber nodejs npm
 sudo apt purge -y snapd
 sudo apt autoremove -y
@@ -86,6 +86,10 @@ ln -sf $HOME/dotfiles/config/starship/starship.toml $HOME/.config/starship.toml
 
 mkdir -p $HOME/.config/openbox
 ln -sf $HOME/dotfiles/autostart $HOME/.config/openbox/autostart
+ln -sf $HOME/dotfiles/config/openbox/rc.xml $HOME/.config/openbox/rc.xml
+
+mkdir -p $HOME/.config/gtk-3.0
+ln -sf $HOME/dotfiles/config/gtk-3.0/settings.ini $HOME/.config/gtk-3.0/settings.ini
 
 mkdir -p $HOME/.config/fontconfig/conf.d
 ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
@@ -93,14 +97,27 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 fc-cache -f -v
 ```
 
-### 6. Performance tuning
+### 6. GTK/theme configuration
+
+These settings are applied by `install.sh` via `config/gtk-3.0/settings.ini`
+and `config/openbox/rc.xml`. If running manually:
+
+```bash
+# GTK theme, icons, font, cursor
+gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
+
+# Openbox theme: Numix (window decorations) + Adwaita-dark (GTK widgets)
+# Configured in rc.xml <theme><name>Numix</name> and gtk-3.0/settings.ini
+```
+
+### 7. Performance tuning
 
 ```bash
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf
 # Add ,noatime to defaults in /etc/fstab for / and /boot
 ```
 
-### 7. Reboot
+### 8. Reboot
 
 ```bash
 sudo reboot

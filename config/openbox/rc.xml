@@ -42,7 +42,7 @@
                   'Active' - where the active window is -->
   </placement>
   <theme>
-    <name>Adapta-Nokto</name>
+    <name>Numix</name>
     <titleLayout>NLIMC</titleLayout>
     <!--
       available characters are NDSLIMC, each can occur at most once.
@@ -55,7 +55,7 @@
       D: omnipresent (on all desktops).
   -->
     <keepBorder>yes</keepBorder>
-    <animateIconify>no</animateIconify>
+    <animateIconify>yes</animateIconify>
     <font place="ActiveWindow">
       <name>Inter</name>
       <size>10</size>
@@ -78,7 +78,7 @@
       <name>Inter</name>
       <size>10</size>
       <!-- font size in points -->
-      <weight>Bold</weight>
+      <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
       <slant>Normal</slant>
       <!-- 'italic' or 'normal' -->
@@ -120,7 +120,7 @@
 
        use obconf if you want to change these without having to log out
        and back in -->
-    <number>1</number>
+    <number>4</number>
     <firstdesk>1</firstdesk>
     <names>
       <!-- set names up here if you want to, like this:
@@ -267,7 +267,7 @@
     <!-- Take a screenshot of the current window with scrot when Alt+Print are pressed -->
     <keybind key="A-Print">
       <action name="Execute">
-        <command>gnome-screenshot -a</command>
+        <command>scrot -s</command>
       </action>
     </keybind>
     <!-- Keybindings for window switching -->
@@ -322,36 +322,6 @@
       </action>
     </keybind>
     <!-- Keybindings for running applications -->
-    <keybind key="W-h">
-      <action name="Execute">
-        <command>xfce4-clipman-history</command>
-      </action>
-    </keybind>
-    <keybind key="W-f">
-      <action name="Execute">
-        <command>sh -c 'shuf ~/Documents/posts/fsjal | rofi -dmenu -p "fsjal" -theme adapta-nokto -i | tr -d "\r" | xsel -b -i &amp;&amp; xdotool key --clearmodifiers ctrl+v'</command>
-      </action>
-    </keybind>
-    <keybind key="W-o">
-      <action name="Execute">
-        <command>sh -c 'shuf ~/Documents/posts/ofud | rofi -dmenu -p "ofud" -theme adapta-nokto -i | tr -d "\r" | xsel -b -i &amp;&amp; xdotool key --clearmodifiers ctrl+v'</command>
-      </action>
-    </keybind>
-    <keybind key="W-p">
-      <action name="Execute">
-        <command>sh -c 'shuf ~/Documents/posts/ppbb | rofi -dmenu -p "ppbb" -theme adapta-nokto -i | tr -d "\r" | xsel -b -i &amp;&amp; xdotool key --clearmodifiers ctrl+v'</command>
-      </action>
-    </keybind>
-    <keybind key="W-r">
-      <action name="Execute">
-        <command>sh -c 'shuf ~/Documents/posts/richnigga | rofi -dmenu -p "rich nigga" -theme adapta-nokto -i | tr -d "\r" | xsel -b -i &amp;&amp; xdotool key --clearmodifiers ctrl+v'</command>
-      </action>
-    </keybind>
-    <keybind key="W-v">
-      <action name="Execute">
-        <command>~/.config/openbox/clean-paste.sh</command>
-      </action>
-    </keybind>
     <keybind key="W-e">
       <action name="Execute">
         <startupnotify>
@@ -364,7 +334,7 @@
     <!-- Launch scrot when Print is pressed -->
     <keybind key="Print">
       <action name="Execute">
-        <command>gnome-screenshot -a</command>
+        <command>scrot</command>
       </action>
     </keybind>
   </keyboard>
@@ -381,14 +351,14 @@
     <!-- Set this to TRUE to move the mouse pointer across the desktop when
        switching due to hitting the edge of the screen -->
     <context name="Frame">
-      <mousebind button="W-Left" action="Press">
+      <mousebind button="A-Left" action="Press">
         <action name="Focus"/>
         <action name="Raise"/>
       </mousebind>
-      <mousebind button="W-Left" action="Click">
+      <mousebind button="A-Left" action="Click">
         <action name="Unshade"/>
       </mousebind>
-      <mousebind button="W-Left" action="Drag">
+      <mousebind button="A-Left" action="Drag">
         <action name="Move"/>
       </mousebind>
       <mousebind button="A-Right" action="Press">
@@ -674,18 +644,8 @@
         </action>
       </mousebind>
       <mousebind button="Right" action="Press">
-        <!--
         <action name="ShowMenu">
           <menu>root-menu</menu>
-        </action>
-        -->
-        <!--
-      Chris: replace ob menu with jg follow mouse on menu right click
-      https://github.com/jgmenu/jgmenu/blob/master/docs/manual/jgmenututorial.7.md
-      -->
-        <action name="Execute">
-          <!-- <command>jgmenu_run</command> -->
-          <command>jgmenu_run-ob.sh</command>
         </action>
       </mousebind>
     </context>
@@ -740,9 +700,6 @@
     <!-- show the manage desktops section in the client-list-(combined-)menu -->
   </menu>
   <applications>
-    <application class="kitty">
-      <icon>/usr/share/icons/hicolor/48x48/apps/xterm.png</icon>
-    </application>
     <!--
   # this is an example with comments through out. use these to make your
   # own rules, but without the comments of course.
