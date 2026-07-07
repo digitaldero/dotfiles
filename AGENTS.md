@@ -107,7 +107,26 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 fc-cache -f -v
 ```
 
-### 6. WSDD (SMB network discovery)
+### 6. GNOME Keyring (no-password)
+
+```bash
+# Disable D-Bus auto-activation
+mkdir -p $HOME/.local/share/dbus-1/services/
+cat > $HOME/.local/share/dbus-1/services/org.gnome.keyring.service << 'EOF'
+[D-BUS Service]
+Name=org.gnome.keyring
+Exec=/bin/true
+EOF
+# Mask systemd user service to prevent socket activation
+systemctl --user mask gnome-keyring-daemon.socket
+systemctl --user mask gnome-keyring-daemon.service
+# Create keyring with empty password (prompts once, never again)
+echo "" | gnome-keyring-daemon --daemonize --login --components=secrets
+eval $(gnome-keyring-daemon --start)
+export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO
+```
+
+### 7. WSDD (SMB network discovery)
 
 ```bash
 sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
@@ -115,7 +134,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now wsdd
 ```
 
-### 7. GTK/theme configuration
+### 8. GTK/theme configuration
 
 These settings are applied by `install.sh` via `config/gtk-3.0/settings.ini`
 and `config/openbox/rc.xml`. If running manually:
@@ -128,14 +147,14 @@ gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
 # Configured in rc.xml <theme><name>Numix</name> and gtk-3.0/settings.ini
 ```
 
-### 8. Performance tuning
+### 9. Performance tuning
 
 ```bash
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf
 # Add ,noatime to defaults in /etc/fstab for / and /boot
 ```
 
-### 9. Reboot
+### 10. Reboot
 
 ```bash
 sudo reboot

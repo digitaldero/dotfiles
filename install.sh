@@ -85,6 +85,22 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 
 fc-cache -f -v
 
+# --- Phase 5b: Keyring setup ---
+echo "Configuring keyring..."
+# Disable D-Bus activation (prevents gnome-keyring auto-start without password)
+mkdir -p $HOME/.local/share/dbus-1/services/
+cat > $HOME/.local/share/dbus-1/services/org.gnome.keyring.service << 'EOF'
+[D-BUS Service]
+Name=org.gnome.keyring
+Exec=/bin/true
+EOF
+# Mask systemd user service (prevents socket-activated gnome-keyring)
+systemctl --user mask gnome-keyring-daemon.socket 2>/dev/null || true
+systemctl --user mask gnome-keyring-daemon.service 2>/dev/null || true
+# Create keyring with empty password
+echo "" | gnome-keyring-daemon --daemonize --login --components=secrets 2>/dev/null
+gnome-keyring-daemon --start 2>/dev/null
+
 # --- Phase 6: Network discovery ---
 echo "Enabling WSDD for SMB network discovery..."
 sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
