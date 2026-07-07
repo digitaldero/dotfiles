@@ -1,4 +1,4 @@
-#!/home/chris/.config/composer/vendor/bin/drush
+#!/usr/bin/env drush
 <?php
 
 /**

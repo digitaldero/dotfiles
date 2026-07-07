@@ -60,10 +60,7 @@ function format_js($code, $type) {
         $jsbeautify = trim(shell_exec('which js-beautify 2>/dev/null'));
     }
     if (!$jsbeautify || !is_executable($jsbeautify)) {
-        $jsbeautify = '/home/chris/.nvm/versions/node/v22.19.0/bin/js-beautify';
-    }
-    if (!is_executable($jsbeautify)) {
-        $jsbeautify = 'js-beautify';  // last resort, will likely fail and fallback
+        $jsbeautify = 'js-beautify';
     }
 
     $home = getenv('HOME') ?: '/home/chris';

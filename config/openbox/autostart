@@ -3,9 +3,12 @@
 #tint2 &
 xinput --set-prop 11 "libinput Accel Speed" 1
 lxpanel &
-pasystray &
+volumeicon &
 blueman-applet &
 lxpolkit &
-copyq &
-dunst &
-cbatticon &
+xfce4-clipman & #clipboard
+dunst & #notis
+
+xset s off
+xset -dpms
+xset s noblank

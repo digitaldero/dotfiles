@@ -152,4 +152,4 @@ eval "$(zoxide init bash --cmd cd)"
 alias z='zoxide query -i'          # interactive directory jumper
 
 # opencode
-export PATH=/home/chris/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"

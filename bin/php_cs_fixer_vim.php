@@ -30,7 +30,7 @@ function php_cs_fixer($code) {
   file_put_contents($file, $code);
 
   // Path to your config file
-  $configFile = '/home/chris/.config/php_cs_fixer_config.php';
+  $configFile = $_SERVER['HOME'] . '/.config/php_cs_fixer_config.php';
 
   // Run the fixer.
   // We use --config to point to your custom rules (2-spaces, uppercase booleans, etc.)

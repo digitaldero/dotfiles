@@ -25,7 +25,7 @@ function php_cs_fixer($code) {
   rename($tmp, $file);
   file_put_contents($file, $code);
   // system('php-cs-fixer -q fix ' . $file);
-  system('php-cs-fixer -q --config="/home/chris/.config/php_cs_fixer_config.php" fix ' . $file);
+  system('php-cs-fixer -q --config="' . $_SERVER['HOME'] . '/.config/php_cs_fixer_config.php" fix ' . $file);
 
   $code = file_get_contents($file);
   unlink($file);

@@ -58,5 +58,5 @@ XTerm*locale:	true
 XTerm*selectToClipboard:	true
 XTerm*termName: xterm-256color
 XTerm*utf8:	2
-xterm*iconHint: /home/chris/.icons/terminal
-kitty*iconHint: /home/chris/.icons/terminal
+xterm*iconHint: ~/.icons/terminal
+kitty*iconHint: ~/.icons/terminal

@@ -5,7 +5,7 @@
 # Without this, Kitty's enhanced keyboard protocol sends different sequences
 # for F-keys that yazi's input parser often doesn't recognize as <F9> etc.
 
-REAL_YAZI="/home/chris/.local/bin/yazi"
+REAL_YAZI="$HOME/.local/bin/yazi"
 
 # Force legacy keyboard behavior so symbolic keys like <F9> work
 exec env KITTY_KB_PROTOCOL=0 "$REAL_YAZI" "$@"
