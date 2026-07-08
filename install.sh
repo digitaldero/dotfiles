@@ -80,8 +80,12 @@ ln -sf $HOME/dotfiles/config/kitty/kitty.app.png $HOME/.config/kitty/
 ln -sf $HOME/dotfiles/config/kitty/current-theme.conf $HOME/.config/kitty/
 ln -sf $HOME/dotfiles/config/starship/starship.toml $HOME/.config/starship.toml
 
+mkdir -p $HOME/.local/share/applications
+cp -n $HOME/dotfiles/.local/share/applications/kitty.desktop \
+  $HOME/.local/share/applications/kitty.desktop 2>/dev/null || true
+
 mkdir -p $HOME/.config/openbox
-ln -sf $HOME/dotfiles/autostart $HOME/.config/openbox/autostart
+ln -sf $HOME/dotfiles/config/openbox/autostart $HOME/.config/openbox/autostart
 ln -sf $HOME/dotfiles/config/openbox/rc.xml $HOME/.config/openbox/rc.xml
 
 mkdir -p $HOME/.config/gtk-3.0
