@@ -32,39 +32,53 @@ sudo tee /etc/sudoers.d/$USER <<< "$USER ALL=(ALL) NOPASSWD:ALL"
 sudo chmod 440 /etc/sudoers.d/$USER
 ```
 
-### 1. System packages
+### 1. Laptop detection
 
 ```bash
-sudo apt update
-sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman feh thunar scrot wsdd \
-  network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
-  lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
+echo "Is this a laptop? (y/N): "
+read IS_LAPTOP
+```
+
+### 2. System packages
+
+```bash
+PACKAGES="eza kitty bat fd-find ripgrep fzf zoxide git-delta \
+  starship mc openbox lxpanel lxpolkit dunst feh thunar scrot wsdd \
+  network-manager-gnome pasystray pavucontrol copyq gh \
+  lxappearance fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme gh \
-  pipewire pipewire-pulse wireplumber nodejs npm
-sudo apt purge -y snapd
+  pipewire pipewire-pulse wireplumber nodejs npm \
+  plocate libsecret-tools"
+
+case "$IS_LAPTOP" in
+  y|Y) PACKAGES="$PACKAGES cbatticon" ;;
+esac
+
+sudo apt update
+sudo apt install -y $PACKAGES
+sudo apt purge -y snapd xfce4-power-manager
 sudo apt autoremove -y
 ```
 
-### 2. PipeWire
+### 3. PipeWire
 
 ```bash
 systemctl --user enable --now pipewire pipewire-pulse wireplumber
 ```
 
-### 3. NVM
+### 4. NVM
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 ```
 
-### 4. opencode
+### 5. opencode
 
 ```bash
 npm install -g @opencode-ai/plugin
 ```
 
-### 5. Dotfiles symlinking
+### 6. Dotfiles symlinking
 
 ```bash
 ln -sf $HOME/dotfiles/fonts $HOME/.fonts
@@ -107,7 +121,7 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 fc-cache -f -v
 ```
 
-### 6. GNOME Keyring (no-password)
+### 7. GNOME Keyring (no-password)
 
 ```bash
 # Disable D-Bus auto-activation
@@ -126,7 +140,7 @@ eval $(gnome-keyring-daemon --start)
 export GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO
 ```
 
-### 7. WSDD (SMB network discovery)
+### 8. WSDD (SMB network discovery)
 
 ```bash
 sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
@@ -134,7 +148,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now wsdd
 ```
 
-### 8. GTK/theme configuration
+### 9. GTK/theme configuration
 
 These settings are applied by `install.sh` via `config/gtk-3.0/settings.ini`
 and `config/openbox/rc.xml`. If running manually:
@@ -147,14 +161,14 @@ gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
 # Configured in rc.xml <theme><name>Numix</name> and gtk-3.0/settings.ini
 ```
 
-### 9. Performance tuning
+### 10. Performance tuning
 
 ```bash
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf
 # Add ,noatime to defaults in /etc/fstab for / and /boot
 ```
 
-### 10. Reboot
+### 11. Reboot
 
 ```bash
 sudo reboot

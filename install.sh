@@ -14,37 +14,55 @@ if ! sudo -n true 2>/dev/null; then
   sudo chmod 440 /etc/sudoers.d/$USER
 fi
 
-# --- Phase 1: System packages ---
+# --- Phase 1: Laptop detection ---
+IS_LAPTOP=""
+echo ""
+echo "Is this a laptop? (y/N): "
+read -r IS_LAPTOP
+
+# --- Phase 2: System packages ---
 echo "Installing packages..."
-sudo apt update
-sudo apt install -y eza kitty bat fd-find ripgrep fzf zoxide git-delta \
-  starship mc openbox lxpanel lxpolkit dunst blueman feh thunar scrot wsdd \
-  network-manager-gnome pasystray pavucontrol copyq cbatticon gh \
-  lxappearance fonts-dejavu fonts-dejavu-core fonts-open-sans vim-gtk3 xinit xorg \
+
+# Common packages for both workstation and laptop
+PACKAGES="eza kitty bat fd-find ripgrep fzf zoxide git-delta \
+  starship mc openbox lxpanel lxpolkit dunst feh thunar scrot wsdd \
+  network-manager-gnome pasystray pavucontrol copyq gh \
+  lxappearance fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
-  pipewire pipewire-pulse wireplumber nodejs npm
+  pipewire pipewire-pulse wireplumber nodejs npm \
+  plocate libsecret-tools"
+
+# Laptop-specific packages
+case "$IS_LAPTOP" in
+  y|Y) PACKAGES="$PACKAGES cbatticon" ;;
+esac
+
+sudo apt update
+sudo apt install -y $PACKAGES
 
 echo "Removing snapd..."
 sudo apt purge -y snapd 2>/dev/null || true
+# Remove power manager (cbatticon replaces it on laptop; unwanted on workstation)
+sudo apt purge -y xfce4-power-manager 2>/dev/null || true
 sudo apt autoremove -y
 
-# --- Phase 2: PipeWire ---
+# --- Phase 3: PipeWire ---
 echo "Enabling PipeWire..."
 systemctl --user enable --now pipewire pipewire-pulse wireplumber 2>/dev/null || true
 
-# --- Phase 3: NVM ---
+# --- Phase 4: NVM ---
 echo "Installing NVM..."
 if [ ! -d "$HOME/.nvm" ]; then
   curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 fi
 
-# --- Phase 4: opencode ---
+# --- Phase 5: opencode ---
 echo "Installing opencode..."
 if ! command -v opencode &>/dev/null; then
   npm install -g @opencode-ai/plugin
 fi
 
-# --- Phase 5: Dotfiles symlinks ---
+# --- Phase 6: Dotfiles symlinks ---
 echo "Symlinking dotfiles..."
 ln -sf $HOME/dotfiles/fonts $HOME/.fonts
 ln -sf $HOME/dotfiles/themes $HOME/.themes
@@ -85,7 +103,7 @@ ln -sf $HOME/dotfiles/config/fontconfig/conf.d/51-nerd-font-symbols.conf \
 
 fc-cache -f -v
 
-# --- Phase 5b: Keyring setup ---
+# --- Phase 7: Keyring setup ---
 echo "Configuring keyring..."
 # Disable D-Bus activation (prevents gnome-keyring auto-start without password)
 mkdir -p $HOME/.local/share/dbus-1/services/
@@ -101,13 +119,13 @@ systemctl --user mask gnome-keyring-daemon.service 2>/dev/null || true
 echo "" | gnome-keyring-daemon --daemonize --login --components=secrets 2>/dev/null
 gnome-keyring-daemon --start 2>/dev/null
 
-# --- Phase 6: Network discovery ---
+# --- Phase 8: Network discovery ---
 echo "Enabling WSDD for SMB network discovery..."
 sudo cp $HOME/dotfiles/config/systemd/wsdd.service /etc/systemd/system/wsdd.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now wsdd 2>/dev/null || true
 
-# --- Phase 7: Performance tuning ---
+# --- Phase 9: Performance tuning ---
 echo "Tuning system..."
 echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf >/dev/null
 if ! grep -q 'noatime' /etc/fstab; then
