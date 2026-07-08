@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Check if an argument was provided
+if [ -z "$1" ]; then
+  echo "Error: No file specified."
+  echo "Usage: mdtotxt <file.md>"
+  exit 1
+fi
+
+# Check if input file exists
+if [ ! -f "$1" ]; then
+  echo "Error: File '$1' not found."
+  exit 1
+fi
+
+# Define output filename
+output="${1%.md}.txt"
+
+# Perform conversion
+# We use commonmark + hard_line_breaks for better formatting consistency
+if pandoc "$1" -f markdown -t plain -o "$output"; then
+  echo "Success: TXT generated at $output"
+#  xdg-open $output
+  vi $output
+else
+  echo "Error: Conversion failed. Ensure pandoc is installed."
+  exit 1
+fi
