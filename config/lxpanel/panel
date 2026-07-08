@@ -31,7 +31,6 @@ Plugin {
 Plugin {
   type=menu
   Config {
-    image=/usr/share/lxpanel/images/my-computer.png
     system {
     }
     separator {
@@ -42,9 +41,10 @@ Plugin {
     separator {
     }
     item {
-      image=gnome-logout
       command=openbox --exit
+      image=gnome-logout
     }
+    image=/usr/share/lxpanel/images/my-computer.png
   }
 }
 Plugin {

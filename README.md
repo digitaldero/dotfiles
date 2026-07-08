@@ -1,85 +1,147 @@
 # Dotfiles
 
-Personal configuration files for a clean, portable development environment.
+Personal configuration files for a minimal, fast Ubuntu 26.04 Openbox
+workstation. Designed to be portable — run `install.sh` on any machine
+with any username to get a fully configured development environment.
 
-## Fonts
-
-### Terminal: DejaVu Sans Mono + Symbols Nerd Font Mono
-
-Kitty renders **plain DejaVu Sans Mono** for text (crisp, no ligatures). Icons come from a single symbols-only font via `symbol_map` in `config/kitty/kitty.conf`:
-
-- eza file icons (`ll`, `lg`, …)
-- Starship git branch glyph (` `)
-- powerline / nerd-font prompt symbols
-
-Kitty tuning for crisp rendering:
-
-```
-font_size 11.2
-disable_ligatures always
-text_composition_strategy legacy
-```
-
-**One font file** is checked into `fonts/`:
-
-- `SymbolsNerdFontMono-Regular.ttf` — from the [NerdFontsSymbolsOnly](https://github.com/ryanoasis/nerd-fonts/releases) package
-
-DejaVu Sans Mono itself comes from the system (`fonts-dejavu` / `fonts-dejavu-core`). Optional Powerline-patched DejaVu files in `fonts/` are legacy; vim-airline symbols also work via Symbols Nerd Font.
-
-Fontconfig fallback (for Alacritty and other apps) is in `config/fontconfig/conf.d/51-nerd-font-symbols.conf`. Symlink into `~/.config/fontconfig/conf.d/`, then:
+## Quick Start
 
 ```bash
-fc-cache -f -v
+git clone https://github.com/digitaldero/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./install.sh
+sudo reboot
 ```
 
-Debug missing Kitty icons: `kitty --debug-font-fallback`
+The script is idempotent and safe to re-run. It detects whether the
+machine is a laptop (prompts for y/N) and installs `cbatticon` only
+when appropriate.
 
-### GUI: Inter
+## What You Get
 
-Inter is used for Openbox and other GUI elements. Kept in `fonts/`.
+### Window Manager & UI
 
-## Prompt
+- **Openbox** — lightweight stacking WM, configured via `rc.xml`
+- **lxpanel** — taskbar with launchers (Chrome, Kitty, Thunar) and
+  system tray; Logout button runs `openbox --exit`
+- **lxpolkit** — policy kit authentication agent
+- **dunst** — notification daemon
+- **feh** — wallpaper setter
+- **Thunar** — file manager (replaced pcmanfm); SMB browsing enabled
+  via gsettings
+- **lxappearance** — GTK theme switcher
 
-**Starship** provides the shell prompt (`eval "$(starship init bash)"` in `bashrc`). Config: `config/starship/starship.toml`.
+### Terminal & Shell
 
-The git segment is two Starship modules:
+- **Kitty** 0.45.0 — GPU-accelerated terminal; Afterglow theme;
+  DejaVu Sans Mono 11.2 with Nerd Font Symbols via `symbol_map`
+- **Starship** — prompt with git status, timing, directory info
+- **zoxide** — smart `cd` with frecency
+- **fzf** — fuzzy finder with key bindings
+- **eza**, **bat**, **fd**, **ripgrep**, **mc** — modern CLI tools
 
-| Module | Shows |
+### Audio
+
+- **PipeWire** + **wireplumber** — replaces PulseAudio
+- **pasystray** — tray volume control
+- **pavucontrol** — PulseAudio mixer
+
+### Theming
+
+- **GTK**: Adwaita-dark (theme), Papirus-Dark (icons), DMZ-Black
+  (cursors), Inter 11 (GUI font)
+- **Openbox window decorations**: Numix
+- **Dark mode enforced**: gsettings override + GTK3/GTK4 `settings.ini`
+- **Fontconfig**: Nerd Font symbols fallback for apps that need it
+
+### Development Tools
+
+| Category | Packages |
 |---|---|
-| `git_branch` | Branch name with ` ` nerd-font symbol (purple) |
-| `git_status` | Repo state when dirty: `?` untracked, `!` modified, `+` staged, `↑`/`↓` ahead/behind, etc. |
+| CLI essentials | eza, bat, fd-find, ripgrep, fzf, zoxide, git-delta, mc, tig |
+| Shell prompt | Starship |
+| Editor | Vim (`vim-gtk3`) with config in `vim/` and `vimrc` |
+| Terminal | Kitty |
+| Node.js | NVM + Node.js + npm |
+| AI/CLI | opencode (`@opencode-ai/plugin`) |
 
-When the repo is clean, only the branch line appears. Run `starship explain` in any directory to see what each segment is.
+### System Services
 
-`[git_branch]` always shows the current branch with ` `; `[git_state]` shows rebase/merge/etc.; dirty-state symbols come from `[git_status]`.
+| Service | Purpose |
+|---|---|
+| `wsdd.service` | SMB network discovery (lets Thunar see Windows shares) |
+| `pipewire` + `pipewire-pulse` + `wireplumber` | Audio subsystem |
+| gnome-keyring | Empty-password keyring for libsecret clients |
+| `99-swappiness.conf` | `vm.swappiness=10` |
+| `noatime` | Added to root filesystem mount in fstab |
 
-## Tools & Environment
+### Window Icon
 
-- Terminal: Kitty
-- Prompt: Starship
-- CLI tools: eza, bat, fd, ripgrep, fzf (with key bindings)
-- Editor: Vim (managed in `vim/`)
+Kitty uses a custom icon in the titlebar via `config/kitty/kitty.app.png`
+(symlinked to `~/.config/kitty/`). The desktop entry at
+`.local/share/applications/kitty.desktop` overrides the icon to
+`utilities-terminal` (Papirus).
 
-## Setup on New Machine (future)
+## Package List
 
-(To be expanded — clone repo, symlink dotfiles, install required fonts + packages.)
+All packages installed by `install.sh`:
 
-## Recently Added Tools
-
-- **delta** — Beautiful syntax-highlighted git diffs and logs. Configured in `gitconfig`.
-- **zoxide** — Smart `cd` replacement with frecency. Initialized in `bashrc`.
-
-Install on new machines:
-```bash
-sudo apt install git-delta
-curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+```
+eza kitty bat fd-find ripgrep fzf zoxide git-delta starship mc
+openbox lxpanel lxpolkit dunst feh thunar scrot wsdd
+network-manager-gnome pasystray pavucontrol copyq gh lxappearance
+fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg dmz-cursor-theme
+numix-gtk-theme papirus-icon-theme pipewire pipewire-pulse wireplumber
+nodejs npm tig plocate libsecret-tools smbclient samba-common
 ```
 
-## Kitty Window Icon
+Plus `cbatticon` on laptops only.
 
-To have Kitty use a custom icon in the window decoration (titlebar) under Openbox and similar WMs:
+Non-apt tools installed by the script:
 
-- Place an image named `kitty.app.png` in `~/.config/kitty/`
-- This repo manages it at `config/kitty/kitty.app.png` (symlinked).
+- **NVM** — from `nvm-sh/nvm` v0.40.4
+- **opencode** — `npm install -g @opencode-ai/plugin`
 
-The icon will be picked up automatically by Kitty on startup.
+## Design Decisions
+
+| Decision | Rationale |
+|---|---|
+| **No display manager** | LightDM/gdm3 are unnecessary with `startx` from console |
+| **Adwaita-dark + Papirus-Dark** | Consistent dark theme; no CSD conflicts |
+| **Empty-password keyring** | Avoids unlock prompts at boot; libsecret still works |
+| **No compositor** | picom/compton omitted for zero overhead; Intel graphics handle it |
+| **No screen locker** | No xscreensaver, i3lock, etc. — workstation use case |
+| **`cbatticon` on laptop only** | Prompt avoids unnecessary install on desktop |
+| **SMB via WSDD** | `wsdd` provides mDNS-like discovery for Samba shares on local network |
+| **Kitty `symbol_map` vs font patching** | Single symbols font avoids carrying patched DejaVu in repo |
+
+## Directory Layout
+
+```
+dotfiles/
+├── install.sh           # Bootstrap script (run this)
+├── AGENTS.md            # Step-by-step manual + session history
+├── bashrc               # ~/.bashrc
+├── gitconfig            # ~/.gitconfig
+├── vimrc                # ~/.vimrc
+├── Xresources           # ~/.Xresources
+├── gtkrc-2.0            # ~/.gtkrc-2.0
+├── bin/                 # ~/bin (custom scripts)
+├── fonts/               # Nerd Font Symbols, Inter
+├── themes/              # Openbox themes (Numix, custom/)
+├── vim/                 # Vim plugins and config
+├── config/
+│   ├── openbox/         # autostart, rc.xml
+│   ├── kitty/           # kitty.conf, current-theme.conf, kitty.app.png
+│   ├── gtk-3.0/         # settings.ini
+│   ├── gtk-4.0/         # settings.ini
+│   ├── lxpanel/         # panel layout
+│   ├── starship/        # starship.toml
+│   ├── fontconfig/      # 51-nerd-font-symbols.conf
+│   └── systemd/         # wsdd.service
+└── .local/share/applications/
+    └── kitty.desktop    # Desktop entry with Papirus icon
+```
+
+All config files are symlinked by `install.sh` — the repo is the
+source of truth.

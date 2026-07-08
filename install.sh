@@ -30,7 +30,7 @@ PACKAGES="eza kitty bat fd-find ripgrep fzf zoxide git-delta \
   lxappearance fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
   pipewire pipewire-pulse wireplumber nodejs npm \
-  plocate libsecret-tools smbclient samba-common"
+  tig plocate libsecret-tools smbclient samba-common"
 
 # Laptop-specific packages
 case "$IS_LAPTOP" in
