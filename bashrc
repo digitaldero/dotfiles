@@ -153,3 +153,7 @@ alias z='zoxide query -i'          # interactive directory jumper
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/dero/.local/bin:$PATH"
