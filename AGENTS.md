@@ -48,7 +48,7 @@ PACKAGES="eza kitty bat fd-find ripgrep fzf zoxide git-delta \
   lxappearance fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme gh \
   pipewire pipewire-pulse wireplumber nodejs npm \
-  plocate libsecret-tools"
+  plocate libsecret-tools smbclient samba-common"
 
 case "$IS_LAPTOP" in
   y|Y) PACKAGES="$PACKAGES cbatticon" ;;
@@ -163,6 +163,10 @@ gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
 
 # Openbox theme: Numix (window decorations) + Adwaita-dark (GTK widgets)
 # Configured in rc.xml <theme><name>Numix</name> and gtk-3.0/settings.ini
+
+# Enable SMB network browsing in Thunar
+gsettings set org.gnome.system.smb display-mode 'merged'
+gsettings set org.gnome.system.smb workgroup 'WORKGROUP'
 ```
 
 ### 10. Performance tuning

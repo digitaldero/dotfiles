@@ -30,7 +30,7 @@ PACKAGES="eza kitty bat fd-find ripgrep fzf zoxide git-delta \
   lxappearance fonts-dejavu fonts-dejavu-core vim-gtk3 xinit xorg \
   dmz-cursor-theme numix-gtk-theme papirus-icon-theme \
   pipewire pipewire-pulse wireplumber nodejs npm \
-  plocate libsecret-tools"
+  plocate libsecret-tools smbclient samba-common"
 
 # Laptop-specific packages
 case "$IS_LAPTOP" in
@@ -97,6 +97,9 @@ ln -sf $HOME/dotfiles/config/gtk-4.0/settings.ini $HOME/.config/gtk-4.0/settings
 # Override gsettings (takes priority over settings.ini files)
 gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark" 2>/dev/null || true
 gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+# Enable SMB network browsing in Thunar
+gsettings set org.gnome.system.smb display-mode 'merged' 2>/dev/null || true
+gsettings set org.gnome.system.smb workgroup 'WORKGROUP' 2>/dev/null || true
 
 mkdir -p $HOME/.config/lxpanel/default/panels
 ln -sf $HOME/dotfiles/config/lxpanel/panel $HOME/.config/lxpanel/default/panels/panel
