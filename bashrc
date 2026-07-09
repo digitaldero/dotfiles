@@ -83,7 +83,12 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$HOME/.grok/bin:$PATH"
 [[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
 
-# Foundry 
+# Ch CLI (secrets live in ~/.bashrc-private — never commit that file)
+export PATH="$HOME/.ch/bin:$PATH"
+export CH_DEFAULT_PLATFORM="google"
+export CH_DEFAULT_MODEL="gemini-3.1-flash-lite"
+
+# Foundry
 export PATH="$HOME/.foundry/bin:$PATH"
 
 # Truecolor support
@@ -154,6 +159,5 @@ alias z='zoxide query -i'          # interactive directory jumper
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
-
-# Added by Antigravity CLI installer
-export PATH="/home/dero/.local/bin:$PATH"
+# Machine-local secrets / overrides (API keys, etc.) — keep out of git
+[[ -r "$HOME/.bashrc-private" ]] && source "$HOME/.bashrc-private"
