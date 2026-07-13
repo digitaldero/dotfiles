@@ -145,6 +145,10 @@ export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always --level=2 {} 2>/dev/
 # =====================
 # Starship Prompt (modern replacement for old Powerline prompt)
 # =====================
+if [[ -n "$SSH_CONNECTION" ]]; then
+  export STARSHIP_CONFIG="$HOME/.config/starship-remote.toml"
+fi
+
 eval "$(starship init bash)"
 
 # =====================
@@ -158,6 +162,9 @@ alias z='zoxide query -i'          # interactive directory jumper
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+# go 
+export PATH="$HOME/go/bin:$PATH"
 
 # Machine-local secrets / overrides (API keys, etc.) — keep out of git
 [[ -r "$HOME/.bashrc-private" ]] && source "$HOME/.bashrc-private"
